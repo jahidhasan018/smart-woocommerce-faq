@@ -20,3 +20,16 @@ function wsfq_clone_faq( int $post_id ): ?int {
 	$cloner = new \WSFQ\Support\FaqCloner();
 	return $cloner->clone( $post_id );
 }
+
+/**
+ * Resolve the FAQ IDs that apply to a product/variation.
+ *
+ * Convenience wrapper around the container-resolved FaqResolver.
+ *
+ * @param int $product_id Product or variation ID.
+ * @return int[]
+ */
+function wsfq_resolve_faqs( int $product_id ): array {
+	$resolver = \WSFQ\Core\Plugin::instance()->container()->get( \WSFQ\Support\FaqResolver::class );
+	return $resolver->resolve( $product_id );
+}

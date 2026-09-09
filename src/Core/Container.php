@@ -46,10 +46,10 @@ final class Container implements ContainerInterface {
 	public function singleton( string $id, callable $factory ): void {
 		$this->bind(
 			$id,
-			static function () use ( $factory ) {
+			static function ( Container $container ) use ( $factory ) {
 				static $instance = null;
 				if ( null === $instance ) {
-					$instance = $factory();
+					$instance = $factory( $container );
 				}
 				return $instance;
 			}

@@ -70,6 +70,18 @@ final class Plugin {
 			Upgrader::class,
 			static fn(): Upgrader => new Upgrader()
 		);
+
+		$this->container->singleton(
+			\WSFQ\Support\Interfaces\FaqAssignmentInterface::class,
+			static fn(): \WSFQ\Support\PostMetaFaqAssignment => new \WSFQ\Support\PostMetaFaqAssignment()
+		);
+
+		$this->container->singleton(
+			\WSFQ\Support\FaqResolver::class,
+			static fn( Container $c ): \WSFQ\Support\FaqResolver => new \WSFQ\Support\FaqResolver(
+				$c->get( \WSFQ\Support\Interfaces\FaqAssignmentInterface::class )
+			)
+		);
 	}
 
 	/**

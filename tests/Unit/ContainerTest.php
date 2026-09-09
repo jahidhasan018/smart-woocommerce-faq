@@ -80,6 +80,25 @@ final class ContainerTest extends TestCase {
 	}
 
 	/**
+	 * Singleton factory receives the container instance too.
+	 */
+	public function test_singleton_factory_receives_container(): void {
+		$container = new Container();
+		$container->bind( 'inner', static fn() => new \stdClass() );
+		$container->singleton(
+			'outer',
+			static function ( $c ) {
+				$outer        = new \stdClass();
+				$outer->inner = $c->get( 'inner' );
+				return $outer;
+			}
+		);
+
+		$this->assertInstanceOf( \stdClass::class, $container->get( 'outer' )->inner );
+		$this->assertSame( $container->get( 'outer' ), $container->get( 'outer' ) );
+	}
+
+	/**
 	 * Factory receives the container instance for nested resolution.
 	 */
 	public function test_factory_receives_container(): void {

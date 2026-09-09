@@ -7,7 +7,7 @@ Single source of truth for feature status. Updated at the start and end of every
 | # | Feature | Status | Branch | Notes |
 |---|---|---|---|---|
 | 01 | Core CPT/taxonomy skeleton | Done | feature/01-core-cpt-taxonomy-skeleton | wsfq_faq CPT + category/group taxonomies; tests green |
-| 02 | FAQ assignment (product / category / tag / variation / global) | Not started | — | depends on 01 |
+| 02 | FAQ assignment (product / category / tag / variation / global) | Done | feature/02-faq-assignment | postmeta storage + FaqResolver; tests green |
 | 03 | Display engine: hooks for all product/shop/cart/checkout positions | Not started | — | depends on 02 |
 | 04 | Shortcodes (`[wsfq_all]`, `[wsfq_product]`, etc.) | Not started | — | depends on 03 |
 | 05 | Design system + base accordion styles | Not started | — | depends on 03 |
