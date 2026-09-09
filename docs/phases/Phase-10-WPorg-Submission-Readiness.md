@@ -1,6 +1,8 @@
 # Phase 10 — WP.org Submission Readiness
 
 
+**Skills to load:** `wp-plugin-directory-guidelines`, `wp-plugin-development`
+
 - [ ] `readme.txt` complete: description, installation, FAQ, screenshots, changelog, "Additional Information" disclosing third-party AI API usage.
 - [ ] No obfuscated/minified-only code without a build step + source available (your build step already handles this since compiled assets come from committed source).
 - [ ] All bundled third-party code GPL-compatible and disclosed.

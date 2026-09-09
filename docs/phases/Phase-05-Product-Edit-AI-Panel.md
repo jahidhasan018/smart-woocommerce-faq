@@ -1,6 +1,8 @@
 # Phase 5 — Product-Edit Screen: FAQ Panel + AI Generation
 
 
+**Skills to load:** `wp-plugin-development`, `wp-rest-api`, `wp-phpstan`
+
 - A React panel (same `@wordpress/components` toolkit) mounted into the WooCommerce Product Data metabox area via `woocommerce_product_data_panels` / `woocommerce_product_data_tabs`.
 - Manual mode: add/edit/reorder FAQs inline (drag-and-drop via `@wordpress/components`' built-in sortable primitives or a small dependency-free implementation).
 - AI mode: "Generate with AI" button → tone selector → objection-buster template dropdown → calls `wsf/v1/ai/generate` REST endpoint → renders editable preview cards → "Insert" commits selected FAQs to the product.

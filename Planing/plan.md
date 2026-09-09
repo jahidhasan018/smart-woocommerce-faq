@@ -20,6 +20,8 @@
 
 ## Phase 1 — Foundation: Environment, Tooling & AI-Agent Context System
 
+**Skills to load:** `wp-project-triage`, `wp-plugin-development`, `wp-wpcli-and-ops`, `wp-phpstan`, `wp-plugin-directory-guidelines`
+
 This is the phase where you set up everything *once* so that Claude Code, Cursor, DeepSeek, or any future agent can pick up the project cold and behave correctly without you re-explaining the whole project every session.
 
 ### 1.1 Local Development Environment — `wp-env` vs Docker
@@ -252,6 +254,8 @@ smart-woocommerce-faq/
 
 ## Phase 2 — Core Architecture Skeleton ("walking skeleton")
 
+**Skills to load:** `wp-plugin-development`, `wp-wpcli-and-ops`
+
 Build the thinnest possible vertical slice that proves the whole toolchain works, entirely test-first:
 
 - [ ] `Plugin.php` — singleton bootstrap, wires the container, registers activation/deactivation hooks. **Test first**, then implement.
@@ -266,6 +270,8 @@ Build the thinnest possible vertical slice that proves the whole toolchain works
 ---
 
 ## Phase 3 — Feature Build Loop
+
+**Skills to load:** `wp-plugin-development` (base for every feature) + the feature-specific skill(s) below
 
 Every feature from here on follows the same loop, one at a time, never in parallel:
 
@@ -313,9 +319,25 @@ Every feature from here on follows the same loop, one at a time, never in parall
 
 Each row becomes its own `docs/features/NN-*.md` file, created only when you're about to start it (don't pre-write 27 empty specs — that's busywork, not planning).
 
+**Feature → skill map** (load only the relevant one, on top of `wp-plugin-development`):
+
+| Feature(s) | Skill(s) |
+|---|---|
+| 05, 06, 08, 22, 23, 27 (frontend UI, blocks, editors) | `wp-block-development`, `wpds` |
+| 07 (schema), 14, 16, 17 (AJAX/search/Q&A) | `wp-rest-api` |
+| 21 (REST API) | `wp-rest-api` |
+| 10, 11, 12 (AI providers/generation) | `wp-rest-api`, `wp-phpstan` |
+| 18 (analytics) | `wp-performance` |
+| 19, 20 (import/export/migration) | `wp-wpcli-and-ops`, `wp-plugin-development` |
+| 24 (WPML/Polylang), 25 (multisite) | `wp-wpcli-and-ops` |
+| Any feature with WP-CLI commands | `wp-wpcli-and-ops` |
+| All (final QA) | `wp-plugin-directory-guidelines`, `wp-performance` |
+
 ---
 
 ## Phase 4 — Settings Dashboard (Gutenberg-native, tabbed)
+
+**Skills to load:** `wp-plugin-development`, `wpds`, `wp-rest-api`
 
 Matching a Jetpack-style dashboard means **using WordPress's own component library**, not hand-rolling UI:
 
@@ -329,6 +351,8 @@ Matching a Jetpack-style dashboard means **using WordPress's own component libra
 
 ## Phase 5 — Product-Edit Screen: FAQ Panel + AI Generation
 
+**Skills to load:** `wp-plugin-development`, `wp-rest-api`, `wp-phpstan`
+
 - A React panel (same `@wordpress/components` toolkit) mounted into the WooCommerce Product Data metabox area via `woocommerce_product_data_panels` / `woocommerce_product_data_tabs`.
 - Manual mode: add/edit/reorder FAQs inline (drag-and-drop via `@wordpress/components`' built-in sortable primitives or a small dependency-free implementation).
 - AI mode: "Generate with AI" button → tone selector → objection-buster template dropdown → calls `wsf/v1/ai/generate` REST endpoint → renders editable preview cards → "Insert" commits selected FAQs to the product.
@@ -339,6 +363,8 @@ Matching a Jetpack-style dashboard means **using WordPress's own component libra
 ---
 
 ## Phase 6 — Design System
+
+**Skills to load:** `wpds`, `wp-block-development`
 
 - Use **`@wordpress/scripts`' built-in Sass support** (import `.scss` directly from your JS entry points — no extra Sass toolchain to configure or maintain) for both admin and frontend styles. This is "something that already ships with the WordPress ecosystem," as you asked for.
 - `assets/src/scss/tokens.scss` — CSS custom properties (`--wsf-color-primary`, `--wsf-radius`, `--wsf-space-*`, `--wsf-font-*`), generated once from Sass variables. Runtime customization (colors chosen in Settings → Design tab) writes an inline `<style>` block overriding these custom properties — no rebuild needed for a client to pick a brand color.
@@ -351,6 +377,8 @@ Matching a Jetpack-style dashboard means **using WordPress's own component libra
 ---
 
 ## Phase 7 — Database, Caching & Performance
+
+**Skills to load:** `wp-performance`, `wp-plugin-development`
 
 **Data model default: CPT + postmeta, not custom tables**, for the FAQ content itself and its assignments (product/category/tag/variation/global). Reasoning: you get WP core's object-cache-aware `get_post_meta()` for free, it's what WP.org reviewers expect to see, and it avoids the schema-migration complexity of custom tables for something that isn't high-volume.
 
@@ -371,6 +399,8 @@ Matching a Jetpack-style dashboard means **using WordPress's own component libra
 
 ## Phase 8 — Security & REST API
 
+**Skills to load:** `wp-rest-api`, `wp-plugin-development`
+
 - Namespace: `wsf/v1`.
 - **Every** route has a real `permission_callback` — `current_user_can()` checks for admin routes, and for the handful of genuinely public routes (e.g., a read-only public FAQ endpoint for headless frontends), rate-limit by IP/user via a transient-based counter to prevent scraping/cost abuse on any endpoint that touches AI generation.
 - `args` schema on every registered route with both `sanitize_callback` and `validate_callback` — never trust `$request->get_param()` raw.
@@ -383,6 +413,8 @@ Matching a Jetpack-style dashboard means **using WordPress's own component libra
 
 ## Phase 9 — Versioning, Update Safety & Migration System
 
+**Skills to load:** `wp-plugin-development`, `wp-phpstan`
+
 - Semantic Versioning strictly (`MAJOR.MINOR.PATCH`); breaking changes to hooks/filters/data shape only in a MAJOR bump, with a deprecation window (use `_deprecated_function()` / `_deprecated_hook()` for at least two MINOR versions before removal).
 - Single source of truth for the version number (the plugin header `Version:` field); a small Composer/npm script syncs it into `readme.txt`'s `Stable tag` and a `WSF_VERSION` PHP constant at release time — never hand-edit three places separately.
 - `Upgrader.php` (built in Phase 2) is the only place data-shape changes happen on update — every migration is a small, independently-testable method keyed to a version number, run in order, idempotent (safe to re-run if interrupted).
@@ -392,6 +424,8 @@ Matching a Jetpack-style dashboard means **using WordPress's own component libra
 ---
 
 ## Phase 10 — WP.org Submission Readiness
+
+**Skills to load:** `wp-plugin-directory-guidelines`, `wp-plugin-development`
 
 - [ ] `readme.txt` complete: description, installation, FAQ, screenshots, changelog, "Additional Information" disclosing third-party AI API usage.
 - [ ] No obfuscated/minified-only code without a build step + source available (your build step already handles this since compiled assets come from committed source).
@@ -403,6 +437,8 @@ Matching a Jetpack-style dashboard means **using WordPress's own component libra
 ---
 
 ## Phase 11 — Post-Launch Operations
+
+**Skills to load:** `wp-plugin-directory-guidelines`, `wp-wpcli-and-ops`
 
 - Support forum monitoring cadence (WP.org support forum) — decide upfront how often you'll check it; unanswered threads hurt your rating and review-team standing for future plugins.
 - `hotfix/*` branch process (Phase 1.2) exercised for the first real production bug — treat it as a fire drill early rather than the first time under pressure.

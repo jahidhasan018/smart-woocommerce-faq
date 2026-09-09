@@ -1,6 +1,8 @@
 # Phase 3 — Feature Build Loop
 
 
+**Skills to load:** `wp-plugin-development` (base for every feature) + the feature-specific skill(s) below
+
 Every feature from here on follows the same loop, one at a time, never in parallel:
 
 1. Create `docs/features/NN-name.md`, fill in Goal + Acceptance Criteria.
@@ -46,6 +48,20 @@ Every feature from here on follows the same loop, one at a time, never in parall
 | 27 | Accessibility + RTL polish pass | all display work |
 
 Each row becomes its own `docs/features/NN-*.md` file, created only when you're about to start it (don't pre-write 27 empty specs — that's busywork, not planning).
+
+**Feature → skill map** (load only the relevant one, on top of `wp-plugin-development`):
+
+| Feature(s) | Skill(s) |
+|---|---|
+| 05, 06, 08, 22, 23, 27 (frontend UI, blocks, editors) | `wp-block-development`, `wpds` |
+| 07 (schema), 14, 16, 17 (AJAX/search/Q&A) | `wp-rest-api` |
+| 21 (REST API) | `wp-rest-api` |
+| 10, 11, 12 (AI providers/generation) | `wp-rest-api`, `wp-phpstan` |
+| 18 (analytics) | `wp-performance` |
+| 19, 20 (import/export/migration) | `wp-wpcli-and-ops`, `wp-plugin-development` |
+| 24 (WPML/Polylang), 25 (multisite) | `wp-wpcli-and-ops` |
+| Any feature with WP-CLI commands | `wp-wpcli-and-ops` |
+| All (final QA) | `wp-plugin-directory-guidelines`, `wp-performance` |
 
 ---
 

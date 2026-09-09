@@ -1,6 +1,8 @@
 # Phase 4 — Settings Dashboard (Gutenberg-native, tabbed)
 
 
+**Skills to load:** `wp-plugin-development`, `wpds`, `wp-rest-api`
+
 Matching a Jetpack-style dashboard means **using WordPress's own component library**, not hand-rolling UI:
 
 - Build with `@wordpress/scripts` (`wp-scripts`) — this is the same toolchain Gutenberg, WooCommerce, and Jetpack itself use, so you get webpack/Babel/SCSS/React configured for you with zero custom build config, and automatic alignment with core's design language and accessibility defaults.

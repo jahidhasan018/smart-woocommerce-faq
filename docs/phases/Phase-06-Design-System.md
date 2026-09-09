@@ -1,6 +1,8 @@
 # Phase 6 — Design System
 
 
+**Skills to load:** `wpds`, `wp-block-development`
+
 - Use **`@wordpress/scripts`' built-in Sass support** (import `.scss` directly from your JS entry points — no extra Sass toolchain to configure or maintain) for both admin and frontend styles. This is "something that already ships with the WordPress ecosystem," as you asked for.
 - `assets/src/scss/tokens.scss` — CSS custom properties (`--wsf-color-primary`, `--wsf-radius`, `--wsf-space-*`, `--wsf-font-*`), generated once from Sass variables. Runtime customization (colors chosen in Settings → Design tab) writes an inline `<style>` block overriding these custom properties — no rebuild needed for a client to pick a brand color.
 - Two separate stylesheets, never one mega-file:

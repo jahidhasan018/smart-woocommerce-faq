@@ -1,6 +1,8 @@
 # Phase 2 — Core Architecture Skeleton ("walking skeleton")
 
 
+**Skills to load:** `wp-plugin-development`, `wp-wpcli-and-ops`
+
 Build the thinnest possible vertical slice that proves the whole toolchain works, entirely test-first:
 
 - [ ] `Plugin.php` — singleton bootstrap, wires the container, registers activation/deactivation hooks. **Test first**, then implement.

@@ -9,6 +9,8 @@ npm run env:cli -- wp wc install   # WooCommerce sample data
 ## WordPress agent-skills
 This repo uses the official WordPress/agent-skills (WP plugin development, REST API, WP-CLI, PHPStan, performance, WP.org guidelines). They are installed locally and gitignored — on a fresh clone or new environment, reinstall them per README.md "Agent skills". When present, load the relevant one (e.g. wp-plugin-development) before plugin work.
 
+**Load only what the current task needs — never all skills.** Each phase file under /docs/phases/ declares its required skills in a "Skills to load:" line; the Phase 3 file maps each feature to its skills. Read that line, load exactly those skills, and move on. Default for any plugin work: `wp-plugin-development`.
+
 ## Test
 composer test:unit        # PHPUnit, no WP bootstrap (Brain\Monkey)
 composer test:integration # PHPUnit against live wp-env instance

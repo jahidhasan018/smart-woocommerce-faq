@@ -1,6 +1,8 @@
 # Phase 1 — Foundation: Environment, Tooling & AI-Agent Context System
 
 
+**Skills to load:** `wp-project-triage`, `wp-plugin-development`, `wp-wpcli-and-ops`, `wp-phpstan`, `wp-plugin-directory-guidelines`
+
 This is the phase where you set up everything *once* so that Claude Code, Cursor, DeepSeek, or any future agent can pick up the project cold and behave correctly without you re-explaining the whole project every session.
 
 ### 1.1 Local Development Environment — `wp-env` vs Docker

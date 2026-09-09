@@ -1,6 +1,8 @@
 # Phase 7 — Database, Caching & Performance
 
 
+**Skills to load:** `wp-performance`, `wp-plugin-development`
+
 **Data model default: CPT + postmeta, not custom tables**, for the FAQ content itself and its assignments (product/category/tag/variation/global). Reasoning: you get WP core's object-cache-aware `get_post_meta()` for free, it's what WP.org reviewers expect to see, and it avoids the schema-migration complexity of custom tables for something that isn't high-volume.
 
 **Custom table — justified only for analytics events** (Phase 3, item 18): view/expand events can be high-volume and are append-only/aggregatable, which is exactly the case where a dedicated table with `dbDelta()`-managed schema and proper indexes (on `faq_id`, `event_type`, `created_at`) outperforms postmeta. Document this tradeoff explicitly in `docs/DECISIONS.md` so no future agent "simplifies" it back into postmeta and reintroduces N+1 query problems.
