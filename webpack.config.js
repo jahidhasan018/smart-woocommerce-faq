@@ -18,6 +18,7 @@ module.exports = {
 			__dirname,
 			'assets/src/blocks/faq/index.js'
 		),
+		admin: path.resolve( __dirname, 'assets/src/admin/index.js' ),
 	},
 	output: {
 		...defaultConfig.output,

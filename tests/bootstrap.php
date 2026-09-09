@@ -77,6 +77,105 @@ if ( empty( getenv( 'WP_TESTS_DIR' ) ) ) {
 			}
 		}
 	}
+	// Minimal REST stubs so API classes type-hinting them are unit-testable.
+	if ( ! class_exists( '\WP_REST_Request' ) ) {
+		/**
+		 * Test stub for WP_REST_Request.
+		 *
+		 * @package WSFQ
+		 */
+		class WP_REST_Request { // phpcs:ignore
+			/**
+			 * Get JSON body params.
+			 *
+			 * @return array
+			 */
+			public function get_json_params() {
+				return array();
+			}
+		}
+	}
+	if ( ! class_exists( '\WP_REST_Server' ) ) {
+		/**
+		 * Test stub for WP_REST_Server.
+		 *
+		 * @package WSFQ
+		 */
+		class WP_REST_Server { // phpcs:ignore
+			public const READABLE   = 'GET';
+			public const CREATABLE  = 'POST';
+			public const EDITABLE   = 'PUT, PATCH';
+			public const DELETABLE  = 'DELETE';
+			public const ALLMETHODS = 'GET, POST, PUT, PATCH, DELETE';
+		}
+	}
+	if ( ! class_exists( '\WP_REST_Response' ) ) {
+		/**
+		 * Test stub for WP_REST_Response.
+		 *
+		 * @package WSFQ
+		 */
+		class WP_REST_Response { // phpcs:ignore
+			/**
+			 * Response data.
+			 *
+			 * @var mixed
+			 */
+			public $data;
+
+			/**
+			 * Constructor.
+			 *
+			 * @param mixed $data Response data.
+			 */
+			public function __construct( $data = null ) {
+				$this->data = $data;
+			}
+
+			/**
+			 * Get data.
+			 *
+			 * @return mixed
+			 */
+			public function get_data() {
+				return $this->data;
+			}
+		}
+	}
+	if ( ! class_exists( '\WP_Error' ) ) {
+		/**
+		 * Test stub for WP_Error.
+		 *
+		 * @package WSFQ
+		 */
+		class WP_Error { // phpcs:ignore
+			/**
+			 * Error data.
+			 *
+			 * @var array
+			 */
+			public $errors = array();
+
+			/**
+			 * Constructor.
+			 *
+			 * @param string $code    Error code.
+			 * @param string $message Error message.
+			 */
+			public function __construct( $code = '', $message = '' ) {
+				$this->errors = array( $code => array( $message ) );
+			}
+
+			/**
+			 * Check for errors.
+			 *
+			 * @return bool
+			 */
+			public function has_errors() {
+				return ! empty( $this->errors );
+			}
+		}
+	}
 	require_once __DIR__ . '/Unit/TestCase.php';
 	return;
 }

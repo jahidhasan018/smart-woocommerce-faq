@@ -20,4 +20,4 @@ Build with `@wordpress/components`: `TabPanel`, `Card`/`CardBody`, `ToggleContro
 - Accessibility baked in: `aria-expanded`, `aria-controls`, keyboard operability (Enter/Space toggles, arrow-key navigation).
 
 ## Screenshots
-Once the settings dashboard exists (Phase 4), capture screenshots and embed them here so new sessions match the existing visual language automatically.
+The settings dashboard exists (Phase 4 / feature 08): a Gutenberg-native React app at `admin.php?page=wsfq-smart-faq` using `@wordpress/components` (`TabPanel`, `Card`, `ToggleControl`, `Notice`, `Button`). Capture + embed real screenshots here so new sessions match this visual language automatically — do not invent a different panel style.

@@ -13,7 +13,7 @@ Single source of truth for feature status. Updated at the start and end of every
 | 05 | Design system + base accordion styles | Done | feature/05-design-system-base-styles | tokens + accessible accordion + expand/collapse |
 | 06 | Gutenberg block (Prebuilt) | Done | feature/06-gutenberg-block | dynamic wsfq/faq block; Custom deferred |
 | 07 | Google FAQPage JSON-LD schema | Done | feature/07-faqpage-jsonld-schema | FAQPage schema on product + FAQ pages |
-| 08 | Settings dashboard shell + tabs | Not started | — | depends on 05 |
+| 08 | Settings dashboard shell + tabs | Done | feature/08-settings-dashboard | admin React app + wsfq/v1/settings |
 | 09 | Product-edit FAQ meta box, manual entry | Not started | — | depends on 02, 08 |
 | 10 | AI provider abstraction + single-provider generation | Not started | — | depends on 09 |
 | 11 | Multi-provider + failover, tone/templates | Not started | — | depends on 10 |

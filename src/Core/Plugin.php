@@ -118,6 +118,23 @@ final class Plugin {
 				new \WSFQ\Frontend\SchemaGenerator()
 			)
 		);
+
+		$this->container->singleton(
+			\WSFQ\Admin\SettingsService::class,
+			static fn(): \WSFQ\Admin\SettingsService => new \WSFQ\Admin\SettingsService()
+		);
+
+		$this->container->singleton(
+			\WSFQ\Api\SettingsController::class,
+			static fn( Container $c ): \WSFQ\Api\SettingsController => new \WSFQ\Api\SettingsController(
+				$c->get( \WSFQ\Admin\SettingsService::class )
+			)
+		);
+
+		$this->container->singleton(
+			\WSFQ\Admin\SettingsPage::class,
+			static fn(): \WSFQ\Admin\SettingsPage => new \WSFQ\Admin\SettingsPage()
+		);
 	}
 
 	/**
@@ -149,6 +166,45 @@ final class Plugin {
 				$block->register();
 			},
 			20
+		);
+
+		// Settings API registration (admin).
+		add_action(
+			'admin_init',
+			static function (): void {
+				$service = self::$instance->container()->get( \WSFQ\Admin\SettingsService::class );
+				$service->register_setting();
+			}
+		);
+
+		// REST routes.
+		add_action(
+			'rest_api_init',
+			static function (): void {
+				$controller = self::$instance->container()->get( \WSFQ\Api\SettingsController::class );
+				$controller->register_routes();
+			}
+		);
+
+		// Admin menu + settings page.
+		add_action(
+			'admin_menu',
+			static function (): void {
+				$page = self::$instance->container()->get( \WSFQ\Admin\SettingsPage::class );
+				$page->register_menu();
+			}
+		);
+
+		// Enqueue admin app only on the settings page.
+		add_action(
+			'admin_enqueue_scripts',
+			static function ( string $hook ): void {
+				if ( 'toplevel_page_wsfq-smart-faq' !== $hook ) {
+					return;
+				}
+				$page = self::$instance->container()->get( \WSFQ\Admin\SettingsPage::class );
+				$page->enqueue_assets();
+			}
 		);
 
 		// Frontend display engine (woocommerce hooks).
