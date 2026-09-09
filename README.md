@@ -46,11 +46,13 @@ The project uses the official [WordPress/agent-skills](https://github.com/WordPr
 - `wordpress-router` — classifies the repo and routes to the right workflow
 - `wp-project-triage` — detects project type, tooling, and versions
 - `wp-plugin-development` — plugin architecture, hooks, Settings API, security
+- `wp-block-development` — Gutenberg blocks: `block.json`, attributes, rendering, deprecations
 - `wp-rest-api` — REST API routes, schema, auth, response shaping
 - `wp-wpcli-and-ops` — WP-CLI commands and automation
 - `wp-performance` — profiling, caching, database optimization
 - `wp-phpstan` — PHPStan config, baselines, WP-specific typing
 - `wp-plugin-directory-guidelines` — WordPress Plugin Directory Guidelines
+- `wpds` — WordPress Design System
 
 ### Install (one-time, per environment)
 
@@ -66,7 +68,7 @@ node shared/scripts/skillpack-build.mjs --clean
 node shared/scripts/skillpack-install.mjs \
   --dest=<path/to/smart-woocommerce-faq> \
   --targets=claude,cursor,codex,vscode \
-  --skills=wordpress-router,wp-project-triage,wp-plugin-development,wp-rest-api,wp-wpcli-and-ops,wp-performance,wp-phpstan,wp-plugin-directory-guidelines
+  --skills=wordpress-router,wp-project-triage,wp-plugin-development,wp-block-development,wp-rest-api,wp-wpcli-and-ops,wp-performance,wp-phpstan,wp-plugin-directory-guidelines,wpds
 ```
 
 Or install globally so they're available across all your projects:
