@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+#
+# Pre-push hook — fast local feedback before CI runs.
+# Installed by: bin/install-git-hooks.sh
+#
+set -euo pipefail
+
+echo "== pre-push: composer cs =="
+composer cs
+
+echo "== pre-push: composer stan =="
+composer stan
+
+echo "== pre-push: composer test:unit =="
+composer test:unit
+
+echo "pre-push checks passed."

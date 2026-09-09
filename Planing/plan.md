@@ -2,7 +2,7 @@
 
 **Repo:** https://github.com/jahidhasan018/smart-woocommerce-faq
 **Approach:** TDD + SOLID + OOP, feature-by-feature, WP.org submission target
-**Code prefix:** `wsf_` (functions/hooks/options), `WSF\` (PHP namespace), `wsf-` (CSS/JS/slugs)
+**Code prefix:** `wsfq_` (functions/hooks/options), `WSFQ\` (PHP namespace), `wsfq-` (CSS/JS/slugs)
 
 ---
 
@@ -13,8 +13,8 @@
 3. **Ask, don't assume.** If a requirement, data shape, UX behavior, or naming decision is ambiguous, the agent stops and asks you — it does not guess and it does not silently pick "a reasonable default" for anything architectural (data model, hook names, public API shape, security-sensitive logic). Cosmetic micro-decisions (a variable name, whitespace) don't need to block on this.
 4. **No slop code.** Every function has a docblock. Every external input is validated/sanitized. Every output is escaped. No commented-out code left in commits. No "TODO: fix later" merged into `develop`.
 5. **Small, reviewable units.** One feature = one branch = one PR = one docs/features file = passing CI before merge.
-6. **Developer-friendly by default.** Add `do_action`/`apply_filters` hooks at every render and save point, plus every extension boundary: pre/post render, pre/post save, around AI generation, caching read/write, and import/export. Prefix all hooks/filters `wsf_` and document each in its code docblock. Agents write a hook *as they build the code*, never as a retrofitted "documentation pass" — retrofitting is the exact rework TDD-for-UI is meant to avoid.
-7. **CLI first.** Every feature ships a mirrored WP-CLI command (namespace `WSF\Cli\`) from day one, so agents and developers can drive the plugin from the terminal. CLI commands reuse the same service layer as the REST/admin paths, fire the same `wsf_` hooks, and never bypass sanitization, capability, or cache-invalidation logic.
+6. **Developer-friendly by default.** Add `do_action`/`apply_filters` hooks at every render and save point, plus every extension boundary: pre/post render, pre/post save, around AI generation, caching read/write, and import/export. Prefix all hooks/filters `wsfq_` and document each in its code docblock. Agents write a hook *as they build the code*, never as a retrofitted "documentation pass" — retrofitting is the exact rework TDD-for-UI is meant to avoid.
+7. **CLI first.** Every feature ships a mirrored WP-CLI command (namespace `WSFQ\Cli\`) from day one, so agents and developers can drive the plugin from the terminal. CLI commands reuse the same service layer as the REST/admin paths, fire the same `wsfq_` hooks, and never bypass sanitization, capability, or cache-invalidation logic.
 
 ---
 
@@ -86,7 +86,7 @@ npm run env:cli -- wp wc install   # WooCommerce sample data
 
 ## Test
 composer test:unit        # PHPUnit, no WP bootstrap (Brain\Monkey)
-composer test:integration # PHPUnit against live wp-env instance
+composer test:integration # PHPUnit 9.6 phar vs real WP (WP_TESTS_DIR)
 composer stan             # PHPStan (level defined in phpstan.neon.dist)
 composer cs               # WPCS via PHP_CodeSniffer
 npm run test:e2e          # Playwright against wp-env
@@ -100,7 +100,7 @@ npm run test:e2e          # Playwright against wp-env
 - If a requirement is ambiguous or touches the data model / public API / security, STOP and ask — do not guess.
 
 ## Where things live
-/src/            PSR-4, namespace WSF\, one class per file
+/src/            PSR-4, namespace WSFQ\, one class per file
 /tests/Unit      fast, no WP bootstrap
 /tests/Integration  runs against wp-env
 /tests/e2e       Playwright
@@ -174,11 +174,12 @@ This is what makes switching agents mid-project cheap: a new session reads `AGEN
 
 ### 1.6 Testing Infrastructure (scaffolding only — TDD starts writing real tests in Phase 2)
 
-- **Unit tests:** PHPUnit + `Brain\Monkey` (mocks WP core functions, no WP bootstrap needed → fast, runs in milliseconds, good for pure logic like the AI prompt builder or cache key generation).
-- **Integration tests:** PHPUnit against the real WP core test suite, running inside `wp-env` (needed for anything touching `$wpdb`, post types, hooks firing end-to-end).
+- **Unit tests:** PHPUnit **10** + `Brain\Monkey` (mocks WP core functions, no WP bootstrap needed → fast, runs in milliseconds, good for pure logic like the AI prompt builder or cache key generation).
+- **Integration tests:** the real WP core test suite via `bin/install-wp-tests.sh` (PHPUnit **9.6 phar** — the WP test library, even trunk, still targets PHPUnit 9.x), run against wp-env's MySQL. Covers anything touching `$wpdb`, post types, hooks firing end-to-end. See ADR-007 in `docs/DECISIONS.md`.
 - **E2E tests:** Playwright using `@wordpress/e2e-test-utils-playwright` (the official WP package) — covers admin settings flows, the product-edit FAQ panel, and frontend accordion rendering/interaction.
-- [ ] `phpunit.xml.dist` (two test suites: `unit`, `integration`)
+- [ ] `phpunit.xml.dist` (unit suite, PHPUnit 10) + `phpunit.integration.xml.dist` (integration suite, PHPUnit 9.6)
 - [ ] `tests/bootstrap.php`
+- [ ] `bin/install-wp-tests.sh` + `bin/run-integration-tests.sh`
 - [ ] `playwright.config.ts` pointed at the `wp-env` URL
 - [ ] A "hello world" test in each layer, committed and green, before any real feature work starts — proves the pipeline actually works end-to-end.
 
@@ -189,11 +190,11 @@ This is what makes switching agents mid-project cheap: a new session reads `AGEN
 2. `composer cs` (fail fast, cheapest check)
 3. `composer stan`
 4. `composer test:unit`
-5. Boot `wp-env` in CI (MySQL service container) → `composer test:integration`
+5. `composer test:integration` against a GitHub **MySQL service container** (WP test suite via `bin/install-wp-tests.sh`)
 6. `npm run build` (compiles SCSS/JS via `wp-scripts`)
 7. `npm run test:e2e` (Playwright against the booted `wp-env` instance)
 
-Matrix: PHP 7.4 / 8.1 / 8.3 × WordPress latest / latest-1, WooCommerce latest. Merges to `develop`/`main` blocked until all green.
+Matrix: PHP 8.1 / 8.3 × WordPress latest / latest-1, WooCommerce latest. Merges to `develop`/`main` blocked until all green.
 
 `.github/workflows/deploy.yml` — tag-triggered SVN release, described in 1.2.
 
@@ -219,7 +220,7 @@ smart-woocommerce-faq/
 │   ├── PROGRESS.md
 │   ├── skills/*.md
 │   └── features/NN-*.md
-├── src/                            # namespace WSF\
+├── src/                            # namespace WSFQ\
 │   ├── Core/            Plugin.php, Activator.php, Deactivator.php, Upgrader.php
 │   ├── Cli/             Commands/* (e.g. FaqCommand.php, SettingsCommand.php, ImportCommand.php)
 │   ├── PostTypes/       FaqPostType.php
@@ -239,9 +240,9 @@ smart-woocommerce-faq/
 └── languages/
 ```
 
-- [ ] `composer.json` autoload: `"WSF\\": "src/"`
+- [ ] `composer.json` autoload: `"WSFQ\\": "src/"`
 - [ ] Lightweight service container in `Core/Container.php` (no need for a heavy DI framework — a simple PSR-11-compatible container is enough) so classes receive dependencies via constructor injection, never `new SomeConcreteClass()` buried inside another class.
-- [ ] `src/Cli/` WP-CLI scaffold — a `wsf` command namespace registered on `WP_CLI` load, plus `tests/Cli/` test harness (Brain\Monkey for command args, integration for live wp-env runs). See `/docs/skills/wp-cli.md`.
+- [ ] `src/Cli/` WP-CLI scaffold — a `wsfq` command namespace registered on `WP_CLI` load, plus `tests/Cli/` test harness (Brain\Monkey for command args, integration for live wp-env runs). See `/docs/skills/wp-cli.md`.
 
 ### 1.9 Pre-Flight WP.org Compliance Checks (do these *before* investing months of work)
 
@@ -260,10 +261,10 @@ Build the thinnest possible vertical slice that proves the whole toolchain works
 
 - [ ] `Plugin.php` — singleton bootstrap, wires the container, registers activation/deactivation hooks. **Test first**, then implement.
 - [ ] `Activator.php` / `Deactivator.php` / `uninstall.php` — with a settings toggle "Remove all data on uninstall" (default off) so client sites don't silently lose data.
-- [ ] `Upgrader.php` — compares stored `wsf_db_version` option against `WSF_VERSION` constant on `plugins_loaded`, runs versioned migration methods sequentially. This exists from day one, even with nothing to migrate yet, so the pattern is established before real data model changes happen (this is the mechanism that keeps future updates from breaking existing client sites — see Phase 9).
-- [ ] `FaqPostType.php` — register `wsf_faq` CPT (empty, no meta fields yet).
+- [ ] `Upgrader.php` — compares stored `wsfq_db_version` option against `WSFQ_VERSION` constant on `plugins_loaded`, runs versioned migration methods sequentially. This exists from day one, even with nothing to migrate yet, so the pattern is established before real data model changes happen (this is the mechanism that keeps future updates from breaking existing client sites — see Phase 9).
+- [ ] `FaqPostType.php` — register `wsfq_faq` CPT (empty, no meta fields yet).
 - [ ] `FaqCategory.php` / `FaqGroup.php` — register taxonomies.
-- [ ] `Duplicate/clone FAQ` — `wsf_clone_faq` helper that copies an FAQ post + its metadata/assignments (used by the library and product-edit UI; wired fully in feature 02). Expose via a documented `wsf_` hook so cloning can be extended or suppressed.
+- [ ] `Duplicate/clone FAQ` — `wsfq_clone_faq` helper that copies an FAQ post + its metadata/assignments (used by the library and product-edit UI; wired fully in feature 02). Expose via a documented `wsfq_` hook so cloning can be extended or suppressed.
 - [ ] First green run of the full CI pipeline (cs, stan, unit, integration, e2e-smoke) on a real PR.
 - [ ] Update `docs/PROGRESS.md`.
 
@@ -292,7 +293,7 @@ Every feature from here on follows the same loop, one at a time, never in parall
 | 01 | Core CPT/taxonomy skeleton | Phase 2 |
 | 02 | FAQ assignment (product / category / tag / variation / global) — also wire the duplicate/clone helper from Phase 2 into the library and product-edit UI | 01 |
 | 03 | Display engine: hooks for all product/shop/cart/checkout positions | 02 |
-| 04 | Shortcodes (`[wsf_all]`, `[wsf_product]`, etc.) | 03 |
+| 04 | Shortcodes (`[wsfq_all]`, `[wsfq_product]`, etc.) | 03 |
 | 05 | Design system + base accordion styles (Phase 6) — includes the expand-all / collapse-all control | 03 |
 | 06 | Gutenberg block (Prebuilt + Custom) | 04, 05 |
 | 07 | Google FAQPage JSON-LD schema | 03 |
@@ -343,8 +344,8 @@ Matching a Jetpack-style dashboard means **using WordPress's own component libra
 
 - Build with `@wordpress/scripts` (`wp-scripts`) — this is the same toolchain Gutenberg, WooCommerce, and Jetpack itself use, so you get webpack/Babel/SCSS/React configured for you with zero custom build config, and automatic alignment with core's design language and accessibility defaults.
 - Use `@wordpress/element` (WP's React wrapper — same React, no separate dependency to manage/version-conflict) + `@wordpress/components`: `TabPanel` for the tab structure, `Card`/`CardBody`, `ToggleControl`, `SelectControl`, `Notice`, `Button` — this alone gets you 90% of the way to matching the Jetpack screenshot's visual language, because you're using the exact same primitives Jetpack uses.
-- One React "app" mounted into a single admin page (`admin.php?page=wsf-smart-faq`), with tabs as internal routes (no full page reloads): **General**, **AI Providers**, **Display**, **Design**, **Advanced/Import-Export**. Each tab is its own component reading/writing through the REST API (Phase 8), not `admin-post.php` form submits — keeps state management simple and testable.
-- Settings persisted via the WordPress Settings API / `register_setting()` under the hood, exposed through your own `wsf/v1/settings` REST route, so the UI and any future CLI/automation both go through one validated path.
+- One React "app" mounted into a single admin page (`admin.php?page=wsfq-smart-faq`), with tabs as internal routes (no full page reloads): **General**, **AI Providers**, **Display**, **Design**, **Advanced/Import-Export**. Each tab is its own component reading/writing through the REST API (Phase 8), not `admin-post.php` form submits — keeps state management simple and testable.
+- Settings persisted via the WordPress Settings API / `register_setting()` under the hood, exposed through your own `wsfq/v1/settings` REST route, so the UI and any future CLI/automation both go through one validated path.
 - [ ] `docs/skills/design-system.md` gets updated with real screenshots once this exists, so later features (the product-edit AI panel) visually match it automatically.
 
 ---
@@ -355,7 +356,7 @@ Matching a Jetpack-style dashboard means **using WordPress's own component libra
 
 - A React panel (same `@wordpress/components` toolkit) mounted into the WooCommerce Product Data metabox area via `woocommerce_product_data_panels` / `woocommerce_product_data_tabs`.
 - Manual mode: add/edit/reorder FAQs inline (drag-and-drop via `@wordpress/components`' built-in sortable primitives or a small dependency-free implementation).
-- AI mode: "Generate with AI" button → tone selector → objection-buster template dropdown → calls `wsf/v1/ai/generate` REST endpoint → renders editable preview cards → "Insert" commits selected FAQs to the product.
+- AI mode: "Generate with AI" button → tone selector → objection-buster template dropdown → calls `wsfq/v1/ai/generate` REST endpoint → renders editable preview cards → "Insert" commits selected FAQs to the product.
 - All AI calls happen **server-side** (PHP → provider API) via `wp_remote_post`, never client-side — so API keys never touch the browser.
 - Every AI-generated FAQ is clearly marked as such until a human edits/approves it (protects data quality and gives you an analytics signal later: AI-accepted vs AI-rejected suggestions).
 - Manual-mode answers support media — images, video, and embedded HTML — via the core media picker; AI-generated answers stay plain-text until a human inserts media.
@@ -367,12 +368,12 @@ Matching a Jetpack-style dashboard means **using WordPress's own component libra
 **Skills to load:** `wpds`, `wp-block-development`
 
 - Use **`@wordpress/scripts`' built-in Sass support** (import `.scss` directly from your JS entry points — no extra Sass toolchain to configure or maintain) for both admin and frontend styles. This is "something that already ships with the WordPress ecosystem," as you asked for.
-- `assets/src/scss/tokens.scss` — CSS custom properties (`--wsf-color-primary`, `--wsf-radius`, `--wsf-space-*`, `--wsf-font-*`), generated once from Sass variables. Runtime customization (colors chosen in Settings → Design tab) writes an inline `<style>` block overriding these custom properties — no rebuild needed for a client to pick a brand color.
+- `assets/src/scss/tokens.scss` — CSS custom properties (`--wsfq-color-primary`, `--wsfq-radius`, `--wsfq-space-*`, `--wsfq-font-*`), generated once from Sass variables. Runtime customization (colors chosen in Settings → Design tab) writes an inline `<style>` block overriding these custom properties — no rebuild needed for a client to pick a brand color.
 - Two separate stylesheets, never one mega-file:
   - `admin.scss` — deliberately inherits WP admin's own design tokens where possible (don't fight `wp-admin` styling).
-  - `frontend.scss` — fully scoped (BEM, `wsf-` prefixed classes), theme-agnostic, mobile-first, Flexbox for the accordion rows, CSS Grid for the multi-column layout option, logical properties (`margin-inline`, etc.) for RTL support.
+  - `frontend.scss` — fully scoped (BEM, `wsfq-` prefixed classes), theme-agnostic, mobile-first, Flexbox for the accordion rows, CSS Grid for the multi-column layout option, logical properties (`margin-inline`, etc.) for RTL support.
 - Accessibility baked in from the start: `aria-expanded`, `aria-controls`, keyboard operability (Enter/Space toggles, arrow-key navigation between questions) — not a "polish pass" afterthought, since retrofitting ARIA into already-built markup is exactly the kind of rework TDD-for-UI is meant to avoid.
-- Expand-all / collapse-all control — a frontend toggle that expands/collapses every FAQ on the page; exposed as a render option and via a `wsf_` hook so it can be positioned or hidden.
+- Expand-all / collapse-all control — a frontend toggle that expands/collapses every FAQ on the page; exposed as a render option and via a `wsfq_` hook so it can be positioned or hidden.
 
 ---
 
@@ -390,9 +391,9 @@ Matching a Jetpack-style dashboard means **using WordPress's own component libra
 - Avoid `posts_per_page => -1` anywhere; paginate.
 
 **Caching:**
-- WP Object Cache (`wp_cache_get`/`wp_cache_set`) for per-request/per-object caching (a product's resolved FAQ list), grouped under `wsf_faqs` so it can be flushed independently of everything else.
+- WP Object Cache (`wp_cache_get`/`wp_cache_set`) for per-request/per-object caching (a product's resolved FAQ list), grouped under `wsfq_faqs` so it can be flushed independently of everything else.
 - Transients (with sane TTLs) for expensive aggregate reads (analytics rollups, AI usage stats) — degrade gracefully to "always fresh, no persistent cache" on hosts without a persistent object cache backend.
-- Explicit invalidation hooks: flush the relevant cache key/group on `save_post_wsf_faq`, `deleted_post`, `updated_postmeta` (scoped to relevant meta keys only, not every postmeta write on the site), and on product save if resolved-FAQ caching is product-scoped.
+- Explicit invalidation hooks: flush the relevant cache key/group on `save_post_wsfq_faq`, `deleted_post`, `updated_postmeta` (scoped to relevant meta keys only, not every postmeta write on the site), and on product save if resolved-FAQ caching is product-scoped.
 - Document the cache-key naming scheme once in `docs/skills/wordpress-core.md` so every new feature that touches caching follows the same convention.
 
 ---
@@ -401,7 +402,7 @@ Matching a Jetpack-style dashboard means **using WordPress's own component libra
 
 **Skills to load:** `wp-rest-api`, `wp-plugin-development`
 
-- Namespace: `wsf/v1`.
+- Namespace: `wsfq/v1`.
 - **Every** route has a real `permission_callback` — `current_user_can()` checks for admin routes, and for the handful of genuinely public routes (e.g., a read-only public FAQ endpoint for headless frontends), rate-limit by IP/user via a transient-based counter to prevent scraping/cost abuse on any endpoint that touches AI generation.
 - `args` schema on every registered route with both `sanitize_callback` and `validate_callback` — never trust `$request->get_param()` raw.
 - Nonce (`X-WP-Nonce`) verification for all same-origin admin-UI calls (handled automatically if you use `apiFetch` from `@wordpress/api-fetch`, which is exactly what your Phase 4/5 React panels should use).
@@ -416,7 +417,7 @@ Matching a Jetpack-style dashboard means **using WordPress's own component libra
 **Skills to load:** `wp-plugin-development`, `wp-phpstan`
 
 - Semantic Versioning strictly (`MAJOR.MINOR.PATCH`); breaking changes to hooks/filters/data shape only in a MAJOR bump, with a deprecation window (use `_deprecated_function()` / `_deprecated_hook()` for at least two MINOR versions before removal).
-- Single source of truth for the version number (the plugin header `Version:` field); a small Composer/npm script syncs it into `readme.txt`'s `Stable tag` and a `WSF_VERSION` PHP constant at release time — never hand-edit three places separately.
+- Single source of truth for the version number (the plugin header `Version:` field); a small Composer/npm script syncs it into `readme.txt`'s `Stable tag` and a `WSFQ_VERSION` PHP constant at release time — never hand-edit three places separately.
 - `Upgrader.php` (built in Phase 2) is the only place data-shape changes happen on update — every migration is a small, independently-testable method keyed to a version number, run in order, idempotent (safe to re-run if interrupted).
 - `CHANGELOG.md` (Keep a Changelog format) updated as part of every `release/x.y.z` branch, feeding both the WP.org readme changelog and the GitHub Release notes.
 - Before tagging any release: run the full Playwright e2e suite against a site pre-seeded with "previous version" data to catch upgrade regressions, not just fresh-install behavior — this is what actually protects existing client sites.
@@ -442,7 +443,7 @@ Matching a Jetpack-style dashboard means **using WordPress's own component libra
 
 - Support forum monitoring cadence (WP.org support forum) — decide upfront how often you'll check it; unanswered threads hurt your rating and review-team standing for future plugins.
 - `hotfix/*` branch process (Phase 1.2) exercised for the first real production bug — treat it as a fire drill early rather than the first time under pressure.
-- Marketing/analytics future-proofing: since you explicitly don't want a premium tier now, still design the extension points (interfaces, hook names, a documented `wsf_extensions` filter) so a future companion add-on (or even a totally separate premium plugin) could integrate without you rewriting core — you don't have to build it, just don't architecturally block it.
+- Marketing/analytics future-proofing: since you explicitly don't want a premium tier now, still design the extension points (interfaces, hook names, a documented `wsfq_extensions` filter) so a future companion add-on (or even a totally separate premium plugin) could integrate without you rewriting core — you don't have to build it, just don't architecturally block it.
 - Revisit `docs/DECISIONS.md` quarterly; anything that's aged into "we'd do this differently now" gets a new decision entry, not a silent rewrite.
 
 ---

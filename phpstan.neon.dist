@@ -1,0 +1,20 @@
+parameters:
+    level: 5
+    paths:
+        - src/
+
+    tmpDir: /tmp/wsfq-phpstan
+
+    bootstrapFiles:
+        - vendor/autoload.php
+
+    scanDirectories:
+        - vendor/szepeviktor/phpstan-wordpress/
+        - vendor/php-stubs/wp-cli-stubs/
+
+    stubFiles:
+        - vendor/php-stubs/wp-cli-stubs/wp-cli-stubs.php
+
+    treatPhpDocTypesAsCertain: false
+
+    # PHPStan level is recorded in docs/DECISIONS.md — do not lower it to hide errors.

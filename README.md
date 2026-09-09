@@ -30,7 +30,7 @@ npm run test:e2e          # Playwright against wp-env
 The plugin ships its own WP-CLI commands. Run them via wp-env:
 
 ```bash
-npm run env:cli -- wp wsf <subcommand>
+npm run env:cli -- wp wsfq <subcommand>
 ```
 
 See `docs/skills/wp-cli.md` for the command list and conventions.

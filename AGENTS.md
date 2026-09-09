@@ -12,11 +12,16 @@ This repo uses the official WordPress/agent-skills (WP plugin development, REST 
 **Load only what the current task needs — never all skills.** Each phase file under /docs/phases/ declares its required skills in a "Skills to load:" line; the Phase 3 file maps each feature to its skills. Read that line, load exactly those skills, and move on. Default for any plugin work: `wp-plugin-development`.
 
 ## Test
-composer test:unit        # PHPUnit, no WP bootstrap (Brain\Monkey)
-composer test:integration # PHPUnit against live wp-env instance
+composer test:unit        # PHPUnit 10, no WP bootstrap (Brain\Monkey)
+composer test:integration # PHPUnit 9.6 phar vs real WP (WP_TESTS_DIR, see bin/install-wp-tests.sh)
 composer stan             # PHPStan (level defined in phpstan.neon.dist)
 composer cs               # WPCS via PHP_CodeSniffer
 npm run test:e2e          # Playwright against wp-env
+
+## Integration tests (one-time setup)
+bash bin/install-wp-tests.sh wordpress_test root password 127.0.0.1:54591 latest
+# then:
+WP_TESTS_DIR=/tmp/wsfq-wp-tests/wordpress-tests-lib composer test:integration
 
 ## Non-negotiable rules
 - TDD only: failing test before implementation, every time.
@@ -24,24 +29,24 @@ npm run test:e2e          # Playwright against wp-env
 - Never write a raw SQL string — always $wpdb->prepare().
 - Never echo unescaped output — esc_html/esc_attr/wp_kses_post as appropriate.
 - Every REST route needs a real permission_callback — never __return_true unless the endpoint is intentionally public AND rate-limited.
-- Developer-friendly by default: add do_action/apply_filters hooks at every render and save point, plus every extension boundary (pre/post render, pre/post save, around AI generation, caching read/write). Prefix all hooks/filters `wsf_` and document them in the code docblock.
+- Developer-friendly by default: add do_action/apply_filters hooks at every render and save point, plus every extension boundary (pre/post render, pre/post save, around AI generation, caching read/write). Prefix all hooks/filters `wsfq_` and document them in the code docblock.
 - If a requirement is ambiguous or touches the data model / public API / security, STOP and ask — do not guess.
 
 ## Where things live
-/src/            PSR-4, namespace WSF\, one class per file
+/src/            PSR-4, namespace WSFQ\, one class per file
 /tests/Unit      fast, no WP bootstrap
 /tests/Integration  runs against wp-env
 /tests/e2e       Playwright
 /docs/phases/    one file per build phase — read ONLY the phase you're working on (see Current phase)
 /docs/features/  status of every feature — check before starting work
-/src/Cli/        WP-CLI commands, namespace WSF\Cli\ — registered from day one
+/src/Cli/        WP-CLI commands, namespace WSFQ\Cli\ — registered from day one
 /docs/skills/    load the relevant one before touching that area (see below)
 /docs/DECISIONS.md  why past architectural choices were made — check before overturning one
 
 ## WP-CLI (day one)
 The plugin ships its own WP-CLI commands so agents and devs can drive it from the terminal without clicking through admin. Run them via wp-env:
-npm run env:cli -- wp wsf <subcommand>
-Load /docs/skills/wp-cli.md for the full command list and conventions. Every command mirrors the equivalent REST/admin path and fires the same wsf_ hooks; no command bypasses sanitization, capability, or cache-invalidation logic. Follow TDD: command tests live in tests/Cli/.
+npm run env:cli -- wp wsfq <subcommand>
+Load /docs/skills/wp-cli.md for the full command list and conventions. Every command mirrors the equivalent REST/admin path and fires the same wsfq_ hooks; no command bypasses sanitization, capability, or cache-invalidation logic. Follow TDD: command tests live in tests/Cli/.
 
 ## Current phase
 Check /docs/PROGRESS.md first for what's done, in progress, or not started. It names the active phase/feature.

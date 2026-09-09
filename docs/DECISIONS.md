@@ -18,8 +18,20 @@ Analytics events (view/expand) are high-volume, append-only, and aggregatable �
 Bulk AI generation and migration import run through Action Scheduler (already bundled with WooCommerce) rather than WP-Cron-only logic or a second background-job library. One less dependency, no potential conflict with WooCommerce itself.
 
 ## ADR-005 — PHPStan level (planned)
-PHPStan starts at level 5 and ratchets up as the codebase matures. The current level is recorded here so agents don't "fix" it downward to make errors disappear.
+PHPStan starts at level 5 and ratchets up as the codebase matures. The current level is recorded here so agents don't "fix" it downward to make errors disappear. Current: **level 5**.
+
+## ADR-006 — Code prefix `wsfq` (4 chars, NOT `wsf`)
+WPCS's `PrefixAllGlobals` requires a minimum 4-char prefix; the original `wsf` (3 chars) fails it and isn't configurable. Renamed the whole project (`wsf` → `wsfq`) across hooks, REST routes, options, namespace (`WSFQ\`), WP-CLI (`wp wsfq`), and all docs in one pass. The plan.md and all phase/feature docs now use `wsfq`. Do NOT revert to a 3-char prefix.
+
+## ADR-007 — Two PHPUnit versions: 10 for unit, 9.6 for integration
+The WP core test library (even trunk) still calls PHPUnit 9-only APIs (`PHPUnit\Util\Test::parseTestMethodAnnotations`). So: unit tests run on **PHPUnit 10.5** (via composer, fast pure-logic), integration tests run on a **PHPUnit 9.6 phar** (downloaded by `bin/install-wp-tests.sh`, run via `phpunit.integration.xml.dist` + `bin/run-integration-tests.sh`). Do not "simplify" integration back onto the composer PHPUnit.
+
+## ADR-008 — PSR-4 + `WordPress.Files.FileName` excluded
+The plugin uses PSR-4 (one class per file, filename = class name), which contradicts WPCS's legacy `class-` / hyphenated filename rules. `WordPress.Files.FileName` error codes are excluded in `phpcs.xml.dist` (justified for PSR-4 projects). `EscapeOutput.ExceptionNotEscaped` is also excluded — exception messages are never echoed.
+
+## ADR-009 — WordPress agent-skills are gitignored
+`WordPress/agent-skills` skills are installed project-scoped (`.claude/skills/`, `.codex/`, `.cursor/skills/`, `.github/skills/`) but gitignored — the repo stays clean and skills are reinstalled per README "Agent skills". Do NOT commit the skill folders.
 
 ## Open decision slots
-- Plugin slug/name on WP.org must be verified before code (see Phase 1.9) — a trademark-compliant display name vs slug decision.
-- Text domain must be chosen to match the final slug.
+- Plugin slug/name on WP.org must be verified before code (see Phase 1.9). Decided: slug `smart-woocommerce-faq`, display name "Smart FAQ for WooCommerce" — verified free on WP.org.
+- Text domain: `smart-woocommerce-faq` (matches slug) — set in the plugin header.

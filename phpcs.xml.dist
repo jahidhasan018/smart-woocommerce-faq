@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<ruleset name="Smart-WooCommerce-FAQ">
+    <description>Coding standards for Smart FAQ for WooCommerce — WordPress-Extra + WordPress-Docs + PHPCompatibilityWP.</description>
+
+    <!-- Which files to scan. -->
+    <file>.</file>
+    <exclude-pattern>/.github/</exclude-pattern>
+    <exclude-pattern>/assets/build/</exclude-pattern>
+    <exclude-pattern>/bin/</exclude-pattern>
+    <exclude-pattern>/docs/</exclude-pattern>
+    <exclude-pattern>/node_modules/</exclude-pattern>
+    <exclude-pattern>/Planing/</exclude-pattern>
+    <exclude-pattern>/tests/Integration/</exclude-pattern>
+    <exclude-pattern>/vendor/</exclude-pattern>
+
+    <!-- Core rulesets. -->
+    <rule ref="WordPress-Extra"/>
+    <rule ref="WordPress-Docs"/>
+    <rule ref="PHPCompatibilityWP"/>
+
+    <!-- Exception messages are never rendered to the browser — the escape
+         requirement does not apply to throw new Exception( sprintf(...) ). -->
+    <rule ref="WordPress-Extra">
+        <exclude name="WordPress.Security.EscapeOutput.ExceptionNotEscaped"/>
+    </rule>
+
+    <!-- PHP version we support (>=7.4). -->
+    <config name="testVersion" value="7.4-"/>
+
+    <!-- Minimum PHP version in header must stay >=7.4. -->
+    <rule ref="WordPress.WP.AlternativeFunctions"/>
+
+    <!-- Allow short ternary / modern syntax only where WPCS flags it for older PHP. -->
+    <rule ref="Generic.PHP.Syntax"/>
+
+    <!-- Args for WPCS sniff specific to this project. -->
+    <!-- PSR-4 structure: one class per file, filename must match class name.
+         This conflicts with WordPress.Files.FileName (which wants lowercase-hyphen /
+         class- prefixed names for the legacy one-file style). Disabled for this
+         project — see docs/DECISIONS.md. -->
+    <rule ref="WordPress.Files.FileName">
+        <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+        <exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+    </rule>
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+        <properties>
+            <property name="prefixes" type="array">
+                <element value="wsfq"/>
+                <element value="WSFQ"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- Test infrastructure follows WP-core test conventions (underscore-prefixed
+         helpers, globals, trigger_error) — not plugin prefix/escape rules. -->
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+        <exclude-pattern>/tests/*</exclude-pattern>
+    </rule>
+    <rule ref="WordPress.Security.EscapeOutput">
+        <exclude-pattern>/tests/*</exclude-pattern>
+    </rule>
+
+    <!-- Strip everything but 'error' from reports. -->
+    <arg name="colors"/>
+    <arg value="sp"/>
+    <arg name="extensions" value="php"/>
+</ruleset>

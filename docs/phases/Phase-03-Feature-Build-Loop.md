@@ -22,7 +22,7 @@ Every feature from here on follows the same loop, one at a time, never in parall
 | 01 | Core CPT/taxonomy skeleton | Phase 2 |
 | 02 | FAQ assignment (product / category / tag / variation / global) — also wire the duplicate/clone helper from Phase 2 into the library and product-edit UI | 01 |
 | 03 | Display engine: hooks for all product/shop/cart/checkout positions | 02 |
-| 04 | Shortcodes (`[wsf_all]`, `[wsf_product]`, etc.) | 03 |
+| 04 | Shortcodes (`[wsfq_all]`, `[wsfq_product]`, etc.) | 03 |
 | 05 | Design system + base accordion styles (Phase 6) — includes the expand-all / collapse-all control | 03 |
 | 06 | Gutenberg block (Prebuilt + Custom) | 04, 05 |
 | 07 | Google FAQPage JSON-LD schema | 03 |

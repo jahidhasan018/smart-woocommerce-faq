@@ -13,9 +13,9 @@
 - Avoid `posts_per_page => -1` anywhere; paginate.
 
 **Caching:**
-- WP Object Cache (`wp_cache_get`/`wp_cache_set`) for per-request/per-object caching (a product's resolved FAQ list), grouped under `wsf_faqs` so it can be flushed independently of everything else.
+- WP Object Cache (`wp_cache_get`/`wp_cache_set`) for per-request/per-object caching (a product's resolved FAQ list), grouped under `wsfq_faqs` so it can be flushed independently of everything else.
 - Transients (with sane TTLs) for expensive aggregate reads (analytics rollups, AI usage stats) — degrade gracefully to "always fresh, no persistent cache" on hosts without a persistent object cache backend.
-- Explicit invalidation hooks: flush the relevant cache key/group on `save_post_wsf_faq`, `deleted_post`, `updated_postmeta` (scoped to relevant meta keys only, not every postmeta write on the site), and on product save if resolved-FAQ caching is product-scoped.
+- Explicit invalidation hooks: flush the relevant cache key/group on `save_post_wsfq_faq`, `deleted_post`, `updated_postmeta` (scoped to relevant meta keys only, not every postmeta write on the site), and on product save if resolved-FAQ caching is product-scoped.
 - Document the cache-key naming scheme once in `docs/skills/wordpress-core.md` so every new feature that touches caching follows the same convention.
 
 ---

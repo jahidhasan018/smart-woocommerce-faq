@@ -3,7 +3,7 @@
 
 **Skills to load:** `wp-rest-api`, `wp-plugin-development`
 
-- Namespace: `wsf/v1`.
+- Namespace: `wsfq/v1`.
 - **Every** route has a real `permission_callback` — `current_user_can()` checks for admin routes, and for the handful of genuinely public routes (e.g., a read-only public FAQ endpoint for headless frontends), rate-limit by IP/user via a transient-based counter to prevent scraping/cost abuse on any endpoint that touches AI generation.
 - `args` schema on every registered route with both `sanitize_callback` and `validate_callback` — never trust `$request->get_param()` raw.
 - Nonce (`X-WP-Nonce`) verification for all same-origin admin-UI calls (handled automatically if you use `apiFetch` from `@wordpress/api-fetch`, which is exactly what your Phase 4/5 React panels should use).

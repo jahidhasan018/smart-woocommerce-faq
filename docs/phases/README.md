@@ -8,7 +8,7 @@ This folder splits `Planing/plan.md` into one file per phase. Content is copied 
 
 **Repo:** https://github.com/jahidhasan018/smart-woocommerce-faq
 **Approach:** TDD + SOLID + OOP, feature-by-feature, WP.org submission target
-**Code prefix:** `wsf_` (functions/hooks/options), `WSF\` (PHP namespace), `wsf-` (CSS/JS/slugs)
+**Code prefix:** `wsfq_` (functions/hooks/options), `WSFQ\` (PHP namespace), `wsfq-` (CSS/JS/slugs)
 
 ---
 

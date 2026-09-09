@@ -1,0 +1,53 @@
+{
+  "name": "jahidhasan018/smart-woocommerce-faq",
+  "description": "Developer-friendly WooCommerce FAQ plugin: central FAQ library, product/category/tag/variation assignment, display engine, Gutenberg blocks, AI generation (BYOK), search, analytics.",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "keywords": [
+    "woocommerce",
+    "faq",
+    "wordpress"
+  ],
+  "require": {
+    "php": ">=7.4"
+  },
+  "require-dev": {
+    "brain/monkey": "^2.6",
+    "php-stubs/wp-cli-stubs": "^2.11",
+    "phpcompatibility/phpcompatibility-wp": "^2.1",
+    "phpunit/phpunit": "^10.5",
+    "szepeviktor/phpstan-wordpress": "^1.3",
+    "wp-coding-standards/wpcs": "^3.1",
+    "yoast/phpunit-polyfills": "^2.0"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    },
+    "platform": {
+      "php": "8.1.0"
+    },
+    "sort-packages": true
+  },
+  "autoload": {
+    "psr-4": {
+      "WSFQ\\": "src/"
+    }
+  },
+  "scripts": {
+    "cs": "phpcs",
+    "cs:fix": "phpcbf",
+    "stan": "phpstan analyse --memory-limit=512M",
+    "test": [
+      "@test:unit",
+      "@test:integration"
+    ],
+    "test:unit": "phpunit --testsuite unit",
+    "test:integration": "bash bin/run-integration-tests.sh",
+    "check": [
+      "@cs",
+      "@stan",
+      "@test:unit"
+    ]
+  }
+}

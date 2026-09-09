@@ -67,7 +67,7 @@ npm run env:cli -- wp wc install   # WooCommerce sample data
 
 ## Test
 composer test:unit        # PHPUnit, no WP bootstrap (Brain\Monkey)
-composer test:integration # PHPUnit against live wp-env instance
+composer test:integration # PHPUnit 9.6 phar vs real WP (WP_TESTS_DIR)
 composer stan             # PHPStan (level defined in phpstan.neon.dist)
 composer cs               # WPCS via PHP_CodeSniffer
 npm run test:e2e          # Playwright against wp-env
@@ -81,7 +81,7 @@ npm run test:e2e          # Playwright against wp-env
 - If a requirement is ambiguous or touches the data model / public API / security, STOP and ask — do not guess.
 
 ## Where things live
-/src/            PSR-4, namespace WSF\, one class per file
+/src/            PSR-4, namespace WSFQ\, one class per file
 /tests/Unit      fast, no WP bootstrap
 /tests/Integration  runs against wp-env
 /tests/e2e       Playwright
@@ -155,11 +155,12 @@ This is what makes switching agents mid-project cheap: a new session reads `AGEN
 
 ### 1.6 Testing Infrastructure (scaffolding only — TDD starts writing real tests in Phase 2)
 
-- **Unit tests:** PHPUnit + `Brain\Monkey` (mocks WP core functions, no WP bootstrap needed → fast, runs in milliseconds, good for pure logic like the AI prompt builder or cache key generation).
-- **Integration tests:** PHPUnit against the real WP core test suite, running inside `wp-env` (needed for anything touching `$wpdb`, post types, hooks firing end-to-end).
+- **Unit tests:** PHPUnit **10** + `Brain\Monkey` (mocks WP core functions, no WP bootstrap needed → fast, runs in milliseconds, good for pure logic like the AI prompt builder or cache key generation).
+- **Integration tests:** the real WP core test suite via `bin/install-wp-tests.sh` (PHPUnit **9.6 phar** — the WP test library, even trunk, still targets PHPUnit 9.x), run against wp-env's MySQL. Covers anything touching `$wpdb`, post types, hooks firing end-to-end. See ADR-007 in `docs/DECISIONS.md`.
 - **E2E tests:** Playwright using `@wordpress/e2e-test-utils-playwright` (the official WP package) — covers admin settings flows, the product-edit FAQ panel, and frontend accordion rendering/interaction.
-- [ ] `phpunit.xml.dist` (two test suites: `unit`, `integration`)
+- [ ] `phpunit.xml.dist` (unit suite, PHPUnit 10) + `phpunit.integration.xml.dist` (integration suite, PHPUnit 9.6)
 - [ ] `tests/bootstrap.php`
+- [ ] `bin/install-wp-tests.sh` + `bin/run-integration-tests.sh`
 - [ ] `playwright.config.ts` pointed at the `wp-env` URL
 - [ ] A "hello world" test in each layer, committed and green, before any real feature work starts — proves the pipeline actually works end-to-end.
 
@@ -170,11 +171,11 @@ This is what makes switching agents mid-project cheap: a new session reads `AGEN
 2. `composer cs` (fail fast, cheapest check)
 3. `composer stan`
 4. `composer test:unit`
-5. Boot `wp-env` in CI (MySQL service container) → `composer test:integration`
+5. `composer test:integration` against a GitHub **MySQL service container** (WP test suite via `bin/install-wp-tests.sh`)
 6. `npm run build` (compiles SCSS/JS via `wp-scripts`)
 7. `npm run test:e2e` (Playwright against the booted `wp-env` instance)
 
-Matrix: PHP 7.4 / 8.1 / 8.3 × WordPress latest / latest-1, WooCommerce latest. Merges to `develop`/`main` blocked until all green.
+Matrix: PHP 8.1 / 8.3 × WordPress latest / latest-1, WooCommerce latest. Merges to `develop`/`main` blocked until all green.
 
 `.github/workflows/deploy.yml` — tag-triggered SVN release, described in 1.2.
 
@@ -200,7 +201,7 @@ smart-woocommerce-faq/
 │   ├── PROGRESS.md
 │   ├── skills/*.md
 │   └── features/NN-*.md
-├── src/                            # namespace WSF\
+├── src/                            # namespace WSFQ\
 │   ├── Core/            Plugin.php, Activator.php, Deactivator.php, Upgrader.php
 │   ├── Cli/             Commands/* (e.g. FaqCommand.php, SettingsCommand.php, ImportCommand.php)
 │   ├── PostTypes/       FaqPostType.php
@@ -220,9 +221,9 @@ smart-woocommerce-faq/
 └── languages/
 ```
 
-- [ ] `composer.json` autoload: `"WSF\\": "src/"`
+- [ ] `composer.json` autoload: `"WSFQ\\": "src/"`
 - [ ] Lightweight service container in `Core/Container.php` (no need for a heavy DI framework — a simple PSR-11-compatible container is enough) so classes receive dependencies via constructor injection, never `new SomeConcreteClass()` buried inside another class.
-- [ ] `src/Cli/` WP-CLI scaffold — a `wsf` command namespace registered on `WP_CLI` load, plus `tests/Cli/` test harness (Brain\Monkey for command args, integration for live wp-env runs). See `/docs/skills/wp-cli.md`.
+- [ ] `src/Cli/` WP-CLI scaffold — a `wsfq` command namespace registered on `WP_CLI` load, plus `tests/Cli/` test harness (Brain\Monkey for command args, integration for live wp-env runs). See `/docs/skills/wp-cli.md`.
 
 ### 1.9 Pre-Flight WP.org Compliance Checks (do these *before* investing months of work)
 

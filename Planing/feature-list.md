@@ -3,7 +3,7 @@
 **Plugin name:** WooCommerce Smart FAQ
 **Positioning:** Every feature competitors charge for, free — plus extras they don't offer at all.
 
-**Code prefix convention:** `wsf_` (or `wsf-` for hyphenated slugs/handles) for everything that lives in code — shortcodes, custom post type slug (`wsf_faq`), taxonomy slugs (`wsf_faq_category`, `wsf_faq_group`), hooks/filters (`wsf_before_render`, `wsf_faq_saved`), PHP function/class names (`WSF_FAQ`, `wsf_get_faqs()`), REST API namespace (`wsf/v1`), DB option keys and table names, JS/CSS handles, and enqueued asset filenames.
+**Code prefix convention:** `wsfq_` (or `wsfq-` for hyphenated slugs/handles) for everything that lives in code — shortcodes, custom post type slug (`wsfq_faq`), taxonomy slugs (`wsfq_faq_category`, `wsfq_faq_group`), hooks/filters (`wsfq_before_render`, `wsfq_faq_saved`), PHP function/class names (`WSFQ_FAQ`, `wsfq_get_faqs()`), REST API namespace (`wsfq/v1`), DB option keys and table names, JS/CSS handles, and enqueued asset filenames.
 
 ---
 
@@ -38,13 +38,13 @@
 - Classic Editor and block editor support
 
 ## 4. Shortcodes
-- `[wsf_faq_all]` — every FAQ
-- `[wsf_faq_category id="x"]` — by FAQ category
-- `[wsf_faq_ids ids="1,2,3"]` — specific FAQs
-- `[wsf_faq_product id="x"]` — specific WooCommerce product
-- `[wsf_faq_current]` — current product, dynamic
-- `[wsf_faq_group id="x"]` — a named FAQ Group
-- `[wsf_faq_search]` — AJAX search box
+- `[wsfq_faq_all]` — every FAQ
+- `[wsfq_faq_category id="x"]` — by FAQ category
+- `[wsfq_faq_ids ids="1,2,3"]` — specific FAQs
+- `[wsfq_faq_product id="x"]` — specific WooCommerce product
+- `[wsfq_faq_current]` — current product, dynamic
+- `[wsfq_faq_group id="x"]` — a named FAQ Group
+- `[wsfq_faq_search]` — AJAX search box
 
 ## 5. Styling & Layout
 - 9+ accordion/layout styles
@@ -60,7 +60,7 @@
 - Inline on-page filter search (filters what's already rendered)
 - AJAX autocomplete search across the entire FAQ library
 - AJAX search scoped to a single product's FAQs
-- Hash deep-linking to a specific FAQ (e.g. `#wsf-faq-123`)
+- Hash deep-linking to a specific FAQ (e.g. `#wsfq-faq-123`)
 
 ## 7. AI Features
 - Multi-provider AI FAQ generation: OpenAI, Google Gemini, Claude (BYOK for all three)
@@ -101,7 +101,7 @@
 ## 13. Developer Features *(new — not offered by either competitor)*
 - REST API endpoints for FAQs (read/write), for headless/decoupled WooCommerce (Next.js, etc.)
 - Documented action/filter hooks at every render and save point
-- Template override support via child theme (`/wsf-templates/` folder convention)
+- Template override support via child theme (`/wsfq-templates/` folder convention)
 - Composer/PSR-4 autoloading structure for easier extension by other devs
 
 ## 14. Compatibility & Maintenance

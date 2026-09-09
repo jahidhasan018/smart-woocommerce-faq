@@ -24,6 +24,8 @@ npm-debug.log*
 coverage/
 .phpunit.result.cache
 .phpunit.cache/
+test-results/
+playwright-report/
 
 # IDE / editor
 .idea/

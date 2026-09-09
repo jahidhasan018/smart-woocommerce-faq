@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Integration-only PHPUnit config.
+
+  The WordPress core test library (even trunk) targets PHPUnit 9.x, so the
+  integration suite runs under PHPUnit 9.6 (downloaded as a phar by
+  bin/install-wp-tests.sh). The unit suite keeps PHPUnit 10.5 via phpunit.xml.dist.
+-->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.6/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
+         colors="true"
+         cacheResultFile=".phpunit.result.cache"
+         failOnWarning="true"
+         beStrictAboutOutputDuringTests="true">
+    <testsuites>
+        <testsuite name="integration">
+            <directory>tests/Integration</directory>
+        </testsuite>
+    </testsuites>
+
+    <php>
+        <env name="WSFQ_TESTS_ENV" value="integration"/>
+        <ini name="error_reporting" value="32767"/>
+        <ini name="display_errors" value="1"/>
+    </php>
+</phpunit>
