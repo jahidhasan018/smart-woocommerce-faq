@@ -35,6 +35,48 @@ if ( empty( getenv( 'WP_TESTS_DIR' ) ) ) {
 	if ( ! defined( 'WSFQ_URL' ) ) {
 		define( 'WSFQ_URL', 'http://example.test/plugins/smart-woocommerce-faq/' );
 	}
+	// Minimal WP_Block stub so classes type-hinting it are unit-testable.
+	if ( ! class_exists( '\WP_Block' ) ) {
+		/**
+		 * Test stub for WP_Block.
+		 *
+		 * @package WSFQ
+		 */
+		class WP_Block { // phpcs:ignore
+			/**
+			 * Block attributes.
+			 *
+			 * @var array
+			 */
+			public $attributes = array();
+
+			/**
+			 * Block context.
+			 *
+			 * @var array
+			 */
+			public $context = array();
+
+			/**
+			 * Parsed block.
+			 *
+			 * @var array
+			 */
+			public $parsed_block = array();
+
+			/**
+			 * Constructor.
+			 *
+			 * @param array $parsed_block Parsed block.
+			 * @param array $context      Block context.
+			 */
+			public function __construct( $parsed_block = array(), $context = array() ) {
+				$this->parsed_block = $parsed_block;
+				$this->attributes   = isset( $parsed_block['attrs'] ) ? $parsed_block['attrs'] : array();
+				$this->context      = $context;
+			}
+		}
+	}
 	require_once __DIR__ . '/Unit/TestCase.php';
 	return;
 }

@@ -14,6 +14,10 @@ module.exports = {
 	...defaultConfig,
 	entry: {
 		frontend: path.resolve( __dirname, 'assets/src/js/index.js' ),
+		'faq-block': path.resolve(
+			__dirname,
+			'assets/src/blocks/faq/index.js'
+		),
 	},
 	output: {
 		...defaultConfig.output,
