@@ -110,6 +110,14 @@ final class Plugin {
 				new \WSFQ\Frontend\Renderers\AccordionRenderer()
 			)
 		);
+
+		$this->container->singleton(
+			\WSFQ\Frontend\SchemaOutput::class,
+			static fn( Container $c ): \WSFQ\Frontend\SchemaOutput => new \WSFQ\Frontend\SchemaOutput(
+				$c->get( \WSFQ\Support\Interfaces\FaqResolverInterface::class ),
+				new \WSFQ\Frontend\SchemaGenerator()
+			)
+		);
 	}
 
 	/**
@@ -150,6 +158,9 @@ final class Plugin {
 				$engine = self::$instance->container()->get( \WSFQ\Frontend\DisplayEngine::class );
 				$engine->register();
 				$engine->enqueue_assets();
+
+				$schema = self::$instance->container()->get( \WSFQ\Frontend\SchemaOutput::class );
+				$schema->register();
 			},
 			10
 		);

@@ -28,3 +28,10 @@ class WC_Cart {
 function WC() {
 	return null;
 }
+
+/**
+ * @return bool
+ */
+function is_product() {
+	return false;
+}

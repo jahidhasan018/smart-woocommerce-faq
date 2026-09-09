@@ -12,7 +12,7 @@ Single source of truth for feature status. Updated at the start and end of every
 | 04 | Shortcodes (`[wsfq_faq_all]`, `[wsfq_faq_product]`, etc.) | Done | feature/04-shortcodes | 6 shortcodes; search deferred |
 | 05 | Design system + base accordion styles | Done | feature/05-design-system-base-styles | tokens + accessible accordion + expand/collapse |
 | 06 | Gutenberg block (Prebuilt) | Done | feature/06-gutenberg-block | dynamic wsfq/faq block; Custom deferred |
-| 07 | Google FAQPage JSON-LD schema | Not started | — | depends on 03 |
+| 07 | Google FAQPage JSON-LD schema | Done | feature/07-faqpage-jsonld-schema | FAQPage schema on product + FAQ pages |
 | 08 | Settings dashboard shell + tabs | Not started | — | depends on 05 |
 | 09 | Product-edit FAQ meta box, manual entry | Not started | — | depends on 02, 08 |
 | 10 | AI provider abstraction + single-provider generation | Not started | — | depends on 09 |
