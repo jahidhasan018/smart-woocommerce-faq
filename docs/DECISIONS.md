@@ -35,6 +35,12 @@ The plugin uses PSR-4 (one class per file, filename = class name), which contrad
 ## ADR-010 — Minimal `phpstan-wc.php` stub instead of full WooCommerce stubs
 `php-stubs/woocommerce-stubs` is 4.5MB / 145k lines and crashes PHPStan even at 2G memory. We declare only the WC symbols the plugin references (`WC_Product`, `WC_Cart`, `WC()`) in `phpstan-wc.php` (bootstrap-loaded for analysis only). If the plugin later uses more WC API surface, extend that stub rather than re-adding the full package.
 
+## ADR-011 — Frontend styles compiled to `assets/build/`, source in `assets/src/`
+SCSS/JS source lives in `assets/src/` and compiles via `@wordpress/scripts` (webpack.config.js) to `assets/build/` (gitignored, ships in the release zip). This matches the plan's skeleton. `@wordpress/scripts`' built-in Sass support means no separate Sass toolchain.
+
+## ADR-012 — e2e targets standalone shortcode pages, not classic product tabs
+Default WP block themes (twentytwentyfive/four) don't render WooCommerce's classic product-tabs markup, so the FAQ tab surface can't be e2e-tested there. e2e uses a standalone page with `[wsfq_faq_all]` (theme-independent). Block-theme product surfaces land with feature 23.
+
 ## Open decision slots
 - Plugin slug/name on WP.org must be verified before code (see Phase 1.9). Decided: slug `smart-woocommerce-faq`, display name "Smart FAQ for WooCommerce" — verified free on WP.org.
 - Text domain: `smart-woocommerce-faq` (matches slug) — set in the plugin header.

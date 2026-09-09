@@ -1,0 +1,107 @@
+// Frontend styles — fully scoped (BEM, wsfq- prefixed), theme-agnostic,
+// mobile-first, Flexbox accordion rows, logical properties for RTL.
+
+@use "tokens" as *;
+
+:root {
+	--wsfq-color-primary: #{$wsfq-color-primary};
+	--wsfq-color-text: #{$wsfq-color-text};
+	--wsfq-color-muted: #{$wsfq-color-muted};
+	--wsfq-color-border: #{$wsfq-color-border};
+	--wsfq-color-surface: #{$wsfq-color-surface};
+	--wsfq-color-surface-alt: #{$wsfq-color-surface-alt};
+	--wsfq-color-focus: #{$wsfq-color-focus};
+	--wsfq-radius-sm: #{$wsfq-radius-sm};
+	--wsfq-radius-md: #{$wsfq-radius-md};
+	--wsfq-radius-lg: #{$wsfq-radius-lg};
+	--wsfq-space-xs: #{$wsfq-space-xs};
+	--wsfq-space-sm: #{$wsfq-space-sm};
+	--wsfq-space-md: #{$wsfq-space-md};
+	--wsfq-space-lg: #{$wsfq-space-lg};
+	--wsfq-space-xl: #{$wsfq-space-xl};
+	--wsfq-font-body: #{$wsfq-font-body};
+	--wsfq-font-heading: #{$wsfq-font-heading};
+	--wsfq-transition-fast: #{$wsfq-transition-fast};
+	--wsfq-transition-base: #{$wsfq-transition-base};
+}
+
+.wsfq-accordion {
+	font-family: var(--wsfq-font-body);
+	color: var(--wsfq-color-text);
+	border: 1px solid var(--wsfq-color-border);
+	border-radius: var(--wsfq-radius-md);
+	background: var(--wsfq-color-surface);
+	overflow: hidden;
+}
+
+.wsfq-faq {
+	border-block-end: 1px solid var(--wsfq-color-border);
+
+	&:last-child {
+		border-block-end: 0;
+	}
+}
+
+.wsfq-question {
+	margin: 0;
+	font-family: var(--wsfq-font-heading);
+}
+
+.wsfq-toggle {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	gap: var(--wsfq-space-md);
+	padding: var(--wsfq-space-md);
+	background: transparent;
+	border: 0;
+	color: inherit;
+	font: inherit;
+	font-weight: 600;
+	text-align: start;
+	cursor: pointer;
+
+	&:hover {
+		background: var(--wsfq-color-surface-alt);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--wsfq-color-focus);
+		outline-offset: -2px;
+	}
+}
+
+.wsfq-answer {
+	padding: 0 var(--wsfq-space-md) var(--wsfq-space-md);
+	color: var(--wsfq-color-text);
+
+	&[hidden] {
+		display: none;
+	}
+}
+
+.wsfq-expand-all {
+	padding: var(--wsfq-space-sm) var(--wsfq-space-md);
+	text-align: end;
+}
+
+.wsfq-expand-all-toggle {
+	background: transparent;
+	border: 0;
+	color: var(--wsfq-color-primary);
+	font: inherit;
+	cursor: pointer;
+
+	&:focus-visible {
+		outline: 2px solid var(--wsfq-color-focus);
+		outline-offset: 2px;
+	}
+}
+
+// Multi-column layout option (disabled by default; enabled via settings).
+.wsfq-accordion--columns {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	gap: var(--wsfq-space-md);
+}

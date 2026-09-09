@@ -30,6 +30,7 @@ final class AccordionRendererTest extends TestCase {
 			)
 		);
 		Functions\when( 'esc_html' )->returnArg();
+		Functions\when( 'esc_attr' )->returnArg();
 		Functions\when( 'wp_kses_post' )->returnArg();
 		Functions\when( 'apply_filters_deprecated' )->alias(
 			static function ( $tag, $value ) {
@@ -65,6 +66,7 @@ final class AccordionRendererTest extends TestCase {
 			}
 		);
 		Functions\when( 'esc_html' )->returnArg();
+		Functions\when( 'esc_attr' )->returnArg();
 		Functions\when( 'wp_kses_post' )->returnArg();
 		Functions\when( 'apply_filters' )->alias(
 			static function ( $tag, $value ) {
@@ -84,6 +86,78 @@ final class AccordionRendererTest extends TestCase {
 		$this->assertStringContainsString( 'wsfq-faq-11', $html );
 		$this->assertStringContainsString( 'Shipping question', $html );
 		$this->assertStringContainsString( 'Answer here', $html );
+
+		// Accessible toggle buttons per FAQ.
+		$this->assertStringContainsString( 'aria-expanded="false"', $html );
+		$this->assertStringContainsString( 'aria-controls="wsfq-answer-10"', $html );
+		$this->assertStringContainsString( 'aria-controls="wsfq-answer-11"', $html );
+	}
+
+	/**
+	 * Render() includes the expand-all control when the option is on.
+	 */
+	public function test_render_includes_expand_all_control(): void {
+		Functions\when( 'get_post' )->alias(
+			static function ( $id ) {
+				return (object) array(
+					'ID'           => $id,
+					'post_title'   => 'Shipping question',
+					'post_content' => 'Answer here',
+				);
+			}
+		);
+		Functions\when( 'esc_html' )->returnArg();
+		Functions\when( 'esc_attr' )->returnArg();
+		Functions\when( 'esc_html__' )->justReturn( 'Expand all' );
+		Functions\when( 'wp_kses_post' )->returnArg();
+		Functions\when( 'apply_filters' )->alias(
+			static function ( $tag, $value ) {
+				return $value;
+			}
+		);
+		Functions\when( 'apply_filters_deprecated' )->alias(
+			static function ( $tag, $value ) {
+				return $value;
+			}
+		);
+
+		$html = ( new AccordionRenderer() )->render( array( 10 ), array( 'expand_all' => true ) );
+
+		$this->assertStringContainsString( 'wsfq-expand-all', $html );
+		$this->assertStringContainsString( 'data-wsfq-expand-all', $html );
+	}
+
+	/**
+	 * Render() omits the expand-all control when the option is off.
+	 */
+	public function test_render_omits_expand_all_control(): void {
+		Functions\when( 'get_post' )->alias(
+			static function ( $id ) {
+				return (object) array(
+					'ID'           => $id,
+					'post_title'   => 'Shipping question',
+					'post_content' => 'Answer here',
+				);
+			}
+		);
+		Functions\when( 'esc_html' )->returnArg();
+		Functions\when( 'esc_attr' )->returnArg();
+		Functions\when( 'esc_html__' )->justReturn( 'Expand all' );
+		Functions\when( 'wp_kses_post' )->returnArg();
+		Functions\when( 'apply_filters' )->alias(
+			static function ( $tag, $value ) {
+				return $value;
+			}
+		);
+		Functions\when( 'apply_filters_deprecated' )->alias(
+			static function ( $tag, $value ) {
+				return $value;
+			}
+		);
+
+		$html = ( new AccordionRenderer() )->render( array( 10 ), array( 'expand_all' => false ) );
+
+		$this->assertStringNotContainsString( 'wsfq-expand-all', $html );
 	}
 
 	/**
