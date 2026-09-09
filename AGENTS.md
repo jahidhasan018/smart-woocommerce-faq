@@ -6,6 +6,9 @@ npm install
 npm run env:start        # boots wp-env
 npm run env:cli -- wp wc install   # WooCommerce sample data
 
+## WordPress agent-skills
+This repo uses the official WordPress/agent-skills (WP plugin development, REST API, WP-CLI, PHPStan, performance, WP.org guidelines). They are installed locally and gitignored — on a fresh clone or new environment, reinstall them per README.md "Agent skills". When present, load the relevant one (e.g. wp-plugin-development) before plugin work.
+
 ## Test
 composer test:unit        # PHPUnit, no WP bootstrap (Brain\Monkey)
 composer test:integration # PHPUnit against live wp-env instance

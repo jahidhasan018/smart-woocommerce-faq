@@ -37,3 +37,10 @@ coverage/
 
 # Plugin release archive
 *.zip
+
+# Agent skills (WordPress/agent-skills) — installed locally, NOT pushed
+# Reinstall after a fresh clone — see README.md "Agent skills" section
+.claude/skills/
+.codex/
+.cursor/skills/
+.github/skills/
