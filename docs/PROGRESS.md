@@ -9,7 +9,7 @@ Single source of truth for feature status. Updated at the start and end of every
 | 01 | Core CPT/taxonomy skeleton | Done | feature/01-core-cpt-taxonomy-skeleton | wsfq_faq CPT + category/group taxonomies; tests green |
 | 02 | FAQ assignment (product / category / tag / variation / global) | Done | feature/02-faq-assignment | postmeta storage + FaqResolver; tests green |
 | 03 | Display engine: hooks for all product/shop/cart/checkout positions | Done | feature/03-display-engine | renderer + 8 positions; tests green |
-| 04 | Shortcodes (`[wsfq_all]`, `[wsfq_product]`, etc.) | Not started | — | depends on 03 |
+| 04 | Shortcodes (`[wsfq_faq_all]`, `[wsfq_faq_product]`, etc.) | Done | feature/04-shortcodes | 6 shortcodes; search deferred |
 | 05 | Design system + base accordion styles | Not started | — | depends on 03 |
 | 06 | Gutenberg block (Prebuilt + Custom) | Not started | — | depends on 04, 05 |
 | 07 | Google FAQPage JSON-LD schema | Not started | — | depends on 03 |

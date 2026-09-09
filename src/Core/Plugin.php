@@ -95,6 +95,14 @@ final class Plugin {
 				new \WSFQ\Frontend\Renderers\AccordionRenderer()
 			)
 		);
+
+		$this->container->singleton(
+			\WSFQ\Frontend\Shortcodes\ShortcodeRegistry::class,
+			static fn( Container $c ): \WSFQ\Frontend\Shortcodes\ShortcodeRegistry => new \WSFQ\Frontend\Shortcodes\ShortcodeRegistry(
+				$c->get( \WSFQ\Support\Interfaces\FaqResolverInterface::class ),
+				new \WSFQ\Frontend\Renderers\AccordionRenderer()
+			)
+		);
 	}
 
 	/**
@@ -107,6 +115,16 @@ final class Plugin {
 		add_action( 'init', array( FaqPostType::class, 'register' ) );
 		add_action( 'init', array( FaqCategory::class, 'register' ) );
 		add_action( 'init', array( FaqGroup::class, 'register' ) );
+
+		// Shortcodes.
+		add_action(
+			'init',
+			static function (): void {
+				$registry = self::$instance->container()->get( \WSFQ\Frontend\Shortcodes\ShortcodeRegistry::class );
+				$registry->register();
+			},
+			20
+		);
 
 		// Frontend display engine (woocommerce hooks).
 		add_action(
