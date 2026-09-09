@@ -21,6 +21,20 @@ if ( is_readable( $autoloader ) ) {
 // Unit tests: no WP bootstrap needed. Base TestCase is required explicitly
 // (tests are intentionally NOT composer-autoloaded to avoid double-loading).
 if ( empty( getenv( 'WP_TESTS_DIR' ) ) ) {
+	// Plugin constants are normally defined in the main plugin file, which unit
+	// tests don't load (no WP). Define them here so Core classes can reference them.
+	if ( ! defined( 'WSFQ_VERSION' ) ) {
+		define( 'WSFQ_VERSION', '0.1.0' );
+	}
+	if ( ! defined( 'WSFQ_FILE' ) ) {
+		define( 'WSFQ_FILE', dirname( __DIR__ ) . '/smart-woocommerce-faq.php' );
+	}
+	if ( ! defined( 'WSFQ_DIR' ) ) {
+		define( 'WSFQ_DIR', dirname( __DIR__ ) . '/' );
+	}
+	if ( ! defined( 'WSFQ_URL' ) ) {
+		define( 'WSFQ_URL', 'http://example.test/plugins/smart-woocommerce-faq/' );
+	}
 	require_once __DIR__ . '/Unit/TestCase.php';
 	return;
 }

@@ -40,7 +40,7 @@ Single source of truth for feature status. Updated at the start and end of every
 |---|---|---|---|
 | 00 | Guiding Principles | Done | — | applies to every phase |
 | 01 | Foundation: Environment, Tooling & AI-Agent Context | Done | develop | wp-env, composer/npm tooling, PHPCS/PHPStan, PHPUnit 10 + 9.6-phar split, Playwright, CI, git hooks, prefix → wsfq, skills gitignored |
-| 02 | Core Architecture Skeleton (walking skeleton) | Not started | — | next — see docs/phases/Phase-02 |
+| 02 | Core Architecture Skeleton (walking skeleton) | Done | develop | Plugin singleton, Activator/Deactivator/Upgrader, wsfq_faq CPT + taxonomies, clone helper — all green |
 | 03 | Feature Build Loop (features 01–27) | Not started | — | see feature table above |
 | 04 | Settings Dashboard | Not started | — | depends on feature 05, 08 |
 | 05 | Product-Edit Screen: FAQ Panel + AI Generation | Not started | — | depends on features 09–11 |

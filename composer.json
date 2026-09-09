@@ -32,7 +32,10 @@
   "autoload": {
     "psr-4": {
       "WSFQ\\": "src/"
-    }
+    },
+    "files": [
+      "src/functions.php"
+    ]
   },
   "scripts": {
     "cs": "phpcs",

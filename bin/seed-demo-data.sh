@@ -38,9 +38,9 @@ seed_product "smart-faq-demo-headphones"  "Noise-Cancelling Headphones"  "89.00"
 
 echo "== Seeding demo FAQs =="
 
-# Guard: the wsfq_faq CPT is registered in Phase 2. Until then, FAQ seeding is a no-op.
-if ! "$WP" post-type exists wsfq_faq >/dev/null 2>&1; then
-	echo "wsfq_faq post type not registered yet (Phase 2) — skipping FAQ seeding."
+# Guard: if the wsfq_faq CPT isn't registered yet, skip FAQ seeding gracefully.
+if ! "$WP" eval 'echo post_type_exists( "wsfq_faq" ) ? "yes" : "no";' 2>/dev/null | grep -q yes; then
+	echo "wsfq_faq post type not registered — skipping FAQ seeding."
 	exit 0
 fi
 

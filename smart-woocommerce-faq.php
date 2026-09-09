@@ -33,14 +33,9 @@ require_once WSFQ_DIR . 'vendor/autoload.php';
 
 /**
  * Boot the plugin.
- *
- * Scaffolding only — WSFQ\Core\Plugin is built test-first in Phase 2. Guard the
- * boot call until the class exists so the plugin activates cleanly during Phase 1.
  */
 function wsfq_boot(): void {
-	if ( class_exists( \WSFQ\Core\Plugin::class ) ) {
-		\WSFQ\Core\Plugin::instance();
-	}
+	\WSFQ\Core\Plugin::instance();
 
 	if ( defined( 'WP_CLI' ) && WP_CLI && class_exists( \WSFQ\Cli\Loader::class ) ) {
 		\WSFQ\Cli\Loader::register();

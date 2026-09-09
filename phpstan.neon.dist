@@ -1,3 +1,6 @@
+includes:
+    - vendor/szepeviktor/phpstan-wordpress/extension.neon
+
 parameters:
     level: 5
     paths:
@@ -7,9 +10,9 @@ parameters:
 
     bootstrapFiles:
         - vendor/autoload.php
+        - phpstan-constants.php
 
     scanDirectories:
-        - vendor/szepeviktor/phpstan-wordpress/
         - vendor/php-stubs/wp-cli-stubs/
 
     stubFiles:

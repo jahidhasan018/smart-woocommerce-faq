@@ -5,11 +5,21 @@
 #
 #   WP_TESTS_DIR=/path/to/wordpress-tests-lib composer test:integration
 #
+# WP_TESTS_DIR is required. Optionally set WP_TEST_DB_HOST (host:port) if it has
+# drifted from the generated wp-tests-config.php (wp-env re-assigns MySQL ports).
+#
 set -euo pipefail
 
 if [ -z "${WP_TESTS_DIR:-}" ]; then
 	echo "error: WP_TESTS_DIR is not set. Run bin/install-wp-tests.sh first." >&2
 	exit 1
+fi
+
+if [ -n "${WP_TEST_DB_HOST:-}" ]; then
+	# Rewrite DB_HOST in the generated config to match the current wp-env port.
+	CONFIG="$WP_TESTS_DIR/wp-tests-config.php"
+	sed -i.bak "s|define( 'DB_HOST', '[^']*' )|define( 'DB_HOST', '${WP_TEST_DB_HOST}' )|" "$CONFIG"
+	rm -f "$CONFIG.bak"
 fi
 
 TMPDIR_WP=${TMPDIR:-/tmp}/wsfq-wp-tests
