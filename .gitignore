@@ -1,0 +1,39 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Dependencies
+node_modules/
+vendor/
+
+# Build output
+assets/build/
+dist/
+build/
+
+# WordPress / wp-env
+.wp-env.override.json
+wp-content/
+*.sql
+
+# Logs
+*.log
+npm-debug.log*
+
+# Tests / coverage
+coverage/
+.phpunit.result.cache
+.phpunit.cache/
+
+# IDE / editor
+.idea/
+.vscode/
+*.suo
+
+# Compiled / env
+*.map
+.env
+.env.local
+
+# Plugin release archive
+*.zip
