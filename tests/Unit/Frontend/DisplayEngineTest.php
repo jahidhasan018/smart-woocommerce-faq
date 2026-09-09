@@ -112,6 +112,48 @@ final class DisplayEngineTest extends TestCase {
 	}
 
 	/**
+	 * Enqueues the built frontend assets when the file exists.
+	 */
+	public function test_enqueue_assets(): void {
+		Functions\when( 'get_option' )->justReturn( array() );
+
+		$registered = array();
+		Functions\when( 'wp_register_script' )->alias(
+			static function ( $handle, $src, $deps, $version ) use ( &$registered ) {
+				$registered['scripts'][ $handle ] = array( $src, $deps, $version );
+			}
+		);
+		Functions\when( 'wp_register_style' )->alias(
+			static function ( $handle, $src, $deps, $version ) use ( &$registered ) {
+				$registered['styles'][ $handle ] = array( $src, $deps, $version );
+			}
+		);
+		Functions\when( 'wp_enqueue_script' )->alias(
+			static function ( $h ) use ( &$registered ) {
+				$registered['enqueued_scripts'][] = $h;
+			}
+		);
+		Functions\when( 'wp_enqueue_style' )->alias(
+			static function ( $h ) use ( &$registered ) {
+				$registered['enqueued_styles'][] = $h;
+			}
+		);
+		Functions\when( 'apply_filters' )->alias(
+			static function ( $tag, $value ) {
+				return $value;
+			}
+		);
+		Functions\when( 'esc_url' )->returnArg();
+		Functions\when( 'plugin_dir_url' )->justReturn( 'http://example.test/wp-content/plugins/smart-woocommerce-faq/' );
+
+		$engine = new DisplayEngine( $this->resolver(), $this->renderer() );
+		$engine->enqueue_assets();
+
+		$this->assertContains( 'wsfq-frontend', $registered['enqueued_scripts'] );
+		$this->assertContains( 'wsfq-frontend', $registered['enqueued_styles'] );
+	}
+
+	/**
 	 * Mock resolver.
 	 *
 	 * @return FaqResolverInterface

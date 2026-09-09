@@ -132,6 +132,7 @@ final class Plugin {
 			static function (): void {
 				$engine = self::$instance->container()->get( \WSFQ\Frontend\DisplayEngine::class );
 				$engine->register();
+				$engine->enqueue_assets();
 			},
 			10
 		);

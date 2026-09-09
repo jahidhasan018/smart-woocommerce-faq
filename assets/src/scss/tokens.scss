@@ -1,0 +1,27 @@
+// Design tokens (Phase 6).
+// Compiled once to CSS custom properties. Runtime customization (Settings →
+// Design tab) overrides these via an inline <style> block — no rebuild needed.
+
+$wsfq-color-primary: #2271b1;
+$wsfq-color-text: #1d2327;
+$wsfq-color-muted: #646970;
+$wsfq-color-border: #dcdcde;
+$wsfq-color-surface: #fff;
+$wsfq-color-surface-alt: #f6f7f7;
+$wsfq-color-focus: #2271b1;
+
+$wsfq-radius-sm: 4px;
+$wsfq-radius-md: 8px;
+$wsfq-radius-lg: 12px;
+
+$wsfq-space-xs: 4px;
+$wsfq-space-sm: 8px;
+$wsfq-space-md: 16px;
+$wsfq-space-lg: 24px;
+$wsfq-space-xl: 32px;
+
+$wsfq-font-body: -apple-system, blinkmacsystemfont, "Segoe UI", roboto, oxygen-sans, ubuntu, cantarell, sans-serif;
+$wsfq-font-heading: inherit;
+
+$wsfq-transition-fast: 150ms ease;
+$wsfq-transition-base: 250ms ease;

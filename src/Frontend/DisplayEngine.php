@@ -132,6 +132,37 @@ final class DisplayEngine {
 	}
 
 	/**
+	 * Enqueue the built frontend assets (JS + CSS).
+	 */
+	public function enqueue_assets(): void {
+		$asset_file = WSFQ_DIR . 'assets/build/frontend.asset.php';
+		if ( ! is_readable( $asset_file ) ) {
+			return;
+		}
+
+		$asset = require $asset_file; // phpcs:ignore WordPressVIPMinimum.Files.IncludingFile.UsingVariable
+		$deps  = isset( $asset['dependencies'] ) && is_array( $asset['dependencies'] ) ? $asset['dependencies'] : array();
+		$ver   = isset( $asset['version'] ) ? $asset['version'] : WSFQ_VERSION;
+
+		wp_register_script(
+			'wsfq-frontend',
+			esc_url( WSFQ_URL . 'assets/build/frontend.js' ),
+			$deps,
+			$ver,
+			true
+		);
+		wp_register_style(
+			'wsfq-frontend',
+			esc_url( WSFQ_URL . 'assets/build/frontend.css' ),
+			array(),
+			$ver
+		);
+
+		wp_enqueue_script( 'wsfq-frontend' );
+		wp_enqueue_style( 'wsfq-frontend' );
+	}
+
+	/**
 	 * Render the product tab content.
 	 */
 	public function render_product_tab(): void {
@@ -254,6 +285,11 @@ final class DisplayEngine {
 	 * @return string
 	 */
 	public function render( array $faq_ids, array $args = array() ): string {
+		// Expand-all control defaults to on, overridable per call or via filter.
+		if ( ! array_key_exists( 'expand_all', $args ) ) {
+			$args['expand_all'] = (bool) get_option( 'wsfq_expand_all', true );
+		}
+
 		$renderer = apply_filters( 'wsfq_renderer', $this->renderer, $args );
 		if ( ! $renderer instanceof RendererInterface ) {
 			$renderer = $this->renderer;
