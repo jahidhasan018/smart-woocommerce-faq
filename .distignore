@@ -16,6 +16,7 @@ package-lock.json
 phpcs.xml.dist
 phpstan.neon.dist
 phpstan-constants.php
+phpstan-wc.php
 phpunit.xml.dist
 phpunit.integration.xml.dist
 playwright.config.ts

@@ -16,12 +16,13 @@ declare(strict_types=1);
 namespace WSFQ\Support;
 
 use WSFQ\Support\Interfaces\FaqAssignmentInterface;
+use WSFQ\Support\Interfaces\FaqResolverInterface;
 use WSFQ\PostTypes\FaqPostType;
 
 /**
  * Resolves applicable FAQs for a product.
  */
-final class FaqResolver {
+final class FaqResolver implements FaqResolverInterface {
 
 	/**
 	 * Assignment storage.

@@ -13,6 +13,7 @@
   },
   "require-dev": {
     "brain/monkey": "^2.6",
+    "php-stubs/woocommerce-stubs": "^11.1",
     "php-stubs/wp-cli-stubs": "^2.11",
     "phpcompatibility/phpcompatibility-wp": "^2.1",
     "phpunit/phpunit": "^10.5",
@@ -40,7 +41,7 @@
   "scripts": {
     "cs": "phpcs",
     "cs:fix": "phpcbf",
-    "stan": "phpstan analyse --memory-limit=512M",
+    "stan": "phpstan analyse --memory-limit=2G",
     "test": [
       "@test:unit",
       "@test:integration"
