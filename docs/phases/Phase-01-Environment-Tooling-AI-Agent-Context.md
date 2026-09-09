@@ -200,6 +200,7 @@ smart-woocommerce-faq/
 │   └── features/NN-*.md
 ├── src/                            # namespace WSF\
 │   ├── Core/            Plugin.php, Activator.php, Deactivator.php, Upgrader.php
+│   ├── Cli/             Commands/* (e.g. FaqCommand.php, SettingsCommand.php, ImportCommand.php)
 │   ├── PostTypes/       FaqPostType.php
 │   ├── Taxonomies/      FaqCategory.php, FaqGroup.php
 │   ├── Admin/           SettingsPage.php, Tabs/*, MetaBoxes/FaqMetaBox.php
@@ -211,7 +212,7 @@ smart-woocommerce-faq/
 │   ├── Analytics/
 │   ├── Database/        (only if a custom table is truly justified — see Phase 7)
 │   └── Support/         Interfaces/, Container.php
-├── tests/{Unit,Integration,e2e}/
+├── tests/{Unit,Integration,e2e,Cli}/
 ├── assets/src/{scss,js}/
 ├── assets/build/                   # gitignored, compiled output
 └── languages/
@@ -219,6 +220,7 @@ smart-woocommerce-faq/
 
 - [ ] `composer.json` autoload: `"WSF\\": "src/"`
 - [ ] Lightweight service container in `Core/Container.php` (no need for a heavy DI framework — a simple PSR-11-compatible container is enough) so classes receive dependencies via constructor injection, never `new SomeConcreteClass()` buried inside another class.
+- [ ] `src/Cli/` WP-CLI scaffold — a `wsf` command namespace registered on `WP_CLI` load, plus `tests/Cli/` test harness (Brain\Monkey for command args, integration for live wp-env runs). See `/docs/skills/wp-cli.md`.
 
 ### 1.9 Pre-Flight WP.org Compliance Checks (do these *before* investing months of work)
 

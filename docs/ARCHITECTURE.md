@@ -5,6 +5,9 @@ One diagram/paragraph per module. Updated only when architecture actually change
 ## Core (`src/Core/`)
 `Plugin.php` singleton bootstrap wires the container and registers activation/deactivation hooks. `Activator` / `Deactivator` / `Upgrader` handle lifecycle; `Upgrader` compares the stored `wsf_db_version` option against `WSF_VERSION` and runs versioned, idempotent migrations in order. `Container.php` is a lightweight PSR-11-style container for constructor injection.
 
+## CLI (`src/Cli/`)
+`Commands/*` expose a `wsf` WP-CLI namespace (`wp wsf <group> <command>`) for managing FAQs, settings, AI generation, and import/export from the terminal. Commands delegate to the same service layer as the REST/admin paths and fire the same `wsf_` hooks — no parallel, hookless code path. Registered from day one so agents and developers can drive the plugin without admin UI.
+
 ## Post Types & Taxonomies (`src/PostTypes/`, `src/Taxonomies/`)
 `FaqPostType` registers the `wsf_faq` CPT. `FaqCategory` / `FaqGroup` register taxonomies. Content + assignments live as CPT + postmeta (see DECISIONS.md ADR-001).
 

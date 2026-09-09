@@ -28,3 +28,13 @@ Follow the convention documented here (and in `docs/DECISIONS.md`). Name cache k
 
 ## Hook naming
 Prefix all hooks/filters with `wsf_` (e.g. `wsf_before_render`, `wsf_faq_saved`). See plan.md "Code prefix" conventions.
+
+## Hooks & filters everywhere (developer-friendly mandate)
+This plugin is developer-friendly by default. Add a hook at every render and save point, and at every extension boundary — not as a retrofitted documentation pass:
+- Pre/post render: `wsf_before_render`, `wsf_after_render` (filters on the rendered output/args).
+- Pre/post save: `wsf_before_save_faq`, `wsf_faq_saved` (post ID + data as args).
+- Around AI generation: pre-generate filter (provider, prompt, tone, model) and post-generate action (result, accepted/rejected signal for analytics).
+- Caching read/write: filter the resolved FAQ list before caching, action after cache write/invalidate.
+- Import/export: filter on the exported payload, action after import commits.
+- CLI commands fire the SAME hooks as their REST/admin equivalents — never a parallel, hookless code path.
+Every hook is documented in its code docblock with `@since`, params, and return type.

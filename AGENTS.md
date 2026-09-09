@@ -19,6 +19,7 @@ npm run test:e2e          # Playwright against wp-env
 - Never write a raw SQL string — always $wpdb->prepare().
 - Never echo unescaped output — esc_html/esc_attr/wp_kses_post as appropriate.
 - Every REST route needs a real permission_callback — never __return_true unless the endpoint is intentionally public AND rate-limited.
+- Developer-friendly by default: add do_action/apply_filters hooks at every render and save point, plus every extension boundary (pre/post render, pre/post save, around AI generation, caching read/write). Prefix all hooks/filters `wsf_` and document them in the code docblock.
 - If a requirement is ambiguous or touches the data model / public API / security, STOP and ask — do not guess.
 
 ## Where things live
@@ -28,8 +29,14 @@ npm run test:e2e          # Playwright against wp-env
 /tests/e2e       Playwright
 /docs/phases/    one file per build phase — read ONLY the phase you're working on (see Current phase)
 /docs/features/  status of every feature — check before starting work
+/src/Cli/        WP-CLI commands, namespace WSF\Cli\ — registered from day one
 /docs/skills/    load the relevant one before touching that area (see below)
 /docs/DECISIONS.md  why past architectural choices were made — check before overturning one
+
+## WP-CLI (day one)
+The plugin ships its own WP-CLI commands so agents and devs can drive it from the terminal without clicking through admin. Run them via wp-env:
+npm run env:cli -- wp wsf <subcommand>
+Load /docs/skills/wp-cli.md for the full command list and conventions. Every command mirrors the equivalent REST/admin path and fires the same wsf_ hooks; no command bypasses sanitization, capability, or cache-invalidation logic. Follow TDD: command tests live in tests/Cli/.
 
 ## Current phase
 Check /docs/PROGRESS.md first for what's done, in progress, or not started. It names the active phase/feature.
