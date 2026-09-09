@@ -1,0 +1,22 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "wsfq/faq",
+	"title": "Smart FAQ",
+	"category": "widgets",
+	"icon": "editor-help",
+	"description": "Display FAQs from your Smart FAQ library.",
+	"keywords": [ "faq", "accordion", "question" ],
+	"textdomain": "smart-woocommerce-faq",
+	"editorScript": "wsfq-faq-editor",
+	"attributes": {
+		"faqIds": {
+			"type": "array",
+			"default": []
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": true
+	}
+}

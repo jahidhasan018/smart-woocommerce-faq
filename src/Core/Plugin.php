@@ -103,6 +103,13 @@ final class Plugin {
 				new \WSFQ\Frontend\Renderers\AccordionRenderer()
 			)
 		);
+
+		$this->container->singleton(
+			\WSFQ\Frontend\Blocks\FaqBlock::class,
+			static fn(): \WSFQ\Frontend\Blocks\FaqBlock => new \WSFQ\Frontend\Blocks\FaqBlock(
+				new \WSFQ\Frontend\Renderers\AccordionRenderer()
+			)
+		);
 	}
 
 	/**
@@ -122,6 +129,16 @@ final class Plugin {
 			static function (): void {
 				$registry = self::$instance->container()->get( \WSFQ\Frontend\Shortcodes\ShortcodeRegistry::class );
 				$registry->register();
+			},
+			20
+		);
+
+		// Gutenberg block.
+		add_action(
+			'init',
+			static function (): void {
+				$block = self::$instance->container()->get( \WSFQ\Frontend\Blocks\FaqBlock::class );
+				$block->register();
 			},
 			20
 		);
