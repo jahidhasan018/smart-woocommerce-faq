@@ -32,6 +32,9 @@ The plugin uses PSR-4 (one class per file, filename = class name), which contrad
 ## ADR-009 — WordPress agent-skills are gitignored
 `WordPress/agent-skills` skills are installed project-scoped (`.claude/skills/`, `.codex/`, `.cursor/skills/`, `.github/skills/`) but gitignored — the repo stays clean and skills are reinstalled per README "Agent skills". Do NOT commit the skill folders.
 
+## ADR-010 — Minimal `phpstan-wc.php` stub instead of full WooCommerce stubs
+`php-stubs/woocommerce-stubs` is 4.5MB / 145k lines and crashes PHPStan even at 2G memory. We declare only the WC symbols the plugin references (`WC_Product`, `WC_Cart`, `WC()`) in `phpstan-wc.php` (bootstrap-loaded for analysis only). If the plugin later uses more WC API surface, extend that stub rather than re-adding the full package.
+
 ## Open decision slots
 - Plugin slug/name on WP.org must be verified before code (see Phase 1.9). Decided: slug `smart-woocommerce-faq`, display name "Smart FAQ for WooCommerce" — verified free on WP.org.
 - Text domain: `smart-woocommerce-faq` (matches slug) — set in the plugin header.

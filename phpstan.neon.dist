@@ -11,12 +11,14 @@ parameters:
     bootstrapFiles:
         - vendor/autoload.php
         - phpstan-constants.php
+        - phpstan-wc.php
 
     scanDirectories:
         - vendor/php-stubs/wp-cli-stubs/
 
     stubFiles:
         - vendor/php-stubs/wp-cli-stubs/wp-cli-stubs.php
+        - phpstan-wc.php
 
     treatPhpDocTypesAsCertain: false
 

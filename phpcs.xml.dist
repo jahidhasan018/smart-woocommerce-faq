@@ -12,6 +12,9 @@
     <exclude-pattern>/Planing/</exclude-pattern>
     <exclude-pattern>/tests/Integration/</exclude-pattern>
     <exclude-pattern>/vendor/</exclude-pattern>
+    <!-- Dev-only PHPStan stub files (not scanned by PHPCS). -->
+    <exclude-pattern>/phpstan-constants.php</exclude-pattern>
+    <exclude-pattern>/phpstan-wc.php</exclude-pattern>
 
     <!-- Core rulesets. -->
     <rule ref="WordPress-Extra"/>

@@ -82,6 +82,19 @@ final class Plugin {
 				$c->get( \WSFQ\Support\Interfaces\FaqAssignmentInterface::class )
 			)
 		);
+
+		$this->container->singleton(
+			\WSFQ\Support\Interfaces\FaqResolverInterface::class,
+			static fn( Container $c ): \WSFQ\Support\FaqResolver => $c->get( \WSFQ\Support\FaqResolver::class )
+		);
+
+		$this->container->singleton(
+			\WSFQ\Frontend\DisplayEngine::class,
+			static fn( Container $c ): \WSFQ\Frontend\DisplayEngine => new \WSFQ\Frontend\DisplayEngine(
+				$c->get( \WSFQ\Support\Interfaces\FaqResolverInterface::class ),
+				new \WSFQ\Frontend\Renderers\AccordionRenderer()
+			)
+		);
 	}
 
 	/**
@@ -94,6 +107,16 @@ final class Plugin {
 		add_action( 'init', array( FaqPostType::class, 'register' ) );
 		add_action( 'init', array( FaqCategory::class, 'register' ) );
 		add_action( 'init', array( FaqGroup::class, 'register' ) );
+
+		// Frontend display engine (woocommerce hooks).
+		add_action(
+			'wp',
+			static function (): void {
+				$engine = self::$instance->container()->get( \WSFQ\Frontend\DisplayEngine::class );
+				$engine->register();
+			},
+			10
+		);
 
 		// Run versioned migrations on plugins_loaded (this hook fires when the
 		// plugin boots here).
