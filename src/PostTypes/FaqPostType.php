@@ -3,7 +3,7 @@
  * FAQ post type registrar.
  *
  * Registers the wsfq_faq custom post type. Content + assignments live as
- * CPT + postmeta (see docs/DECISIONS.md ADR-001).
+ * CPT + postmeta (see openspec/DECISIONS.md ADR-001).
  *
  * @package WSFQ
  */

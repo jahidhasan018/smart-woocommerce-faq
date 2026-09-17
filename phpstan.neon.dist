@@ -22,4 +22,4 @@ parameters:
 
     treatPhpDocTypesAsCertain: false
 
-    # PHPStan level is recorded in docs/DECISIONS.md — do not lower it to hide errors.
+    # PHPStan level is recorded in openspec/DECISIONS.md — do not lower it to hide errors.

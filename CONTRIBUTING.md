@@ -8,14 +8,14 @@ This is largely a human-facing summary of `AGENTS.md`. Read `AGENTS.md` first �
 3. `npm run env:start` (boots `wp-env`), then `npm run env:cli -- wp wc install` for WooCommerce sample data.
 
 ## How to contribute a feature
-The canonical build loop lives in plan.md Phase 3. In short, for each feature:
-1. Create `docs/features/NN-name.md` with Goal + Acceptance Criteria.
+The canonical build loop lives in the openspec roadmap. In short, for each feature:
+1. Read the matching spec in `openspec/specs/` (Goal + acceptance criteria live there).
 2. Branch `feature/NN-name` off `develop`.
 3. Write failing tests first (TDD — non-negotiable).
 4. Implement the minimum code to pass, then refactor for SOLID.
 5. Run `composer cs && composer stan && composer test`.
 6. Add Playwright e2e coverage if user-facing.
-7. Update the feature doc and `docs/PROGRESS.md`.
+7. Update `openspec/ROADMAP.md` and archive the feature's change in `openspec/`.
 8. Open a PR → CI green → merge to `develop`.
 
 ## Rules that are non-negotiable

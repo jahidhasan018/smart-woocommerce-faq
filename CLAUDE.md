@@ -1,1 +1,1 @@
-Read /AGENTS.md first. Then read the relevant file(s) under /docs/skills/ for this task.
+Read /AGENTS.md first. Then read the relevant file(s) under .opencode/skills/ for this task.

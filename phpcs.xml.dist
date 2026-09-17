@@ -7,9 +7,8 @@
     <exclude-pattern>/.github/</exclude-pattern>
     <exclude-pattern>/assets/build/</exclude-pattern>
     <exclude-pattern>/bin/</exclude-pattern>
-    <exclude-pattern>/docs/</exclude-pattern>
+    <exclude-pattern>/.opencode/skills/</exclude-pattern>
     <exclude-pattern>/node_modules/</exclude-pattern>
-    <exclude-pattern>/Planing/</exclude-pattern>
     <exclude-pattern>/tests/Integration/</exclude-pattern>
     <exclude-pattern>/vendor/</exclude-pattern>
     <!-- Dev-only PHPStan stub files (not scanned by PHPCS). -->
@@ -44,7 +43,7 @@
     <!-- PSR-4 structure: one class per file, filename must match class name.
          This conflicts with WordPress.Files.FileName (which wants lowercase-hyphen /
          class- prefixed names for the legacy one-file style). Disabled for this
-         project — see docs/DECISIONS.md. -->
+         project — see openspec/DECISIONS.md. -->
     <rule ref="WordPress.Files.FileName">
         <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
         <exclude name="WordPress.Files.FileName.InvalidClassFileName"/>

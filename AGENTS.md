@@ -10,7 +10,10 @@ npm run build            # compile SCSS/JS -> assets/build (after editing assets
 ## WordPress agent-skills
 This repo uses the official WordPress/agent-skills (WP plugin development, REST API, WP-CLI, PHPStan, performance, WP.org guidelines). They are installed locally and gitignored — on a fresh clone or new environment, reinstall them per README.md "Agent skills". When present, load the relevant one (e.g. wp-plugin-development) before plugin work.
 
-**Load only what the current task needs — never all skills.** Each phase file under /docs/phases/ declares its required skills in a "Skills to load:" line; the Phase 3 file maps each feature to its skills. Read that line, load exactly those skills, and move on. Default for any plugin work: `wp-plugin-development`.
+**Load only what the current task needs — never all skills.** Default for any plugin work: `wp-plugin-development`. Load task-specific skills (wp-rest-api, wp-wpcli-and-ops, wp-performance, wp-plugin-directory-guidelines) only when the current feature spec calls for them.
+
+## OpenSpec agent commands (single source)
+The `/opsx-*` commands and `openspec-*` skills used to drive OpenSpec are **generated, not committed**. Their single source of truth is the openspec CLI (`openspec update`), which stamps per-tool copies into `.opencode/`, `.claude/`, `.cursor/`. Keep them gitignored; never hand-edit a per-tool copy. After a fresh clone: `openspec update` (or `openspec init` for the full profile). Verify with `openspec doctor`.
 
 ## Test
 composer test:unit        # PHPUnit 10, no WP bootstrap (Brain\Monkey)
@@ -38,29 +41,27 @@ WP_TESTS_DIR=/tmp/wsfq-wp-tests/wordpress-tests-lib composer test:integration
 /tests/Unit      fast, no WP bootstrap
 /tests/Integration  runs against wp-env
 /tests/e2e       Playwright
-/docs/phases/    one file per build phase — read ONLY the phase you're working on (see Current phase)
-/docs/features/  status of every feature — check before starting work
+/openspec/specs/ durable behavior contract — one file per capability (features map here)
+/openspec/ROADMAP.md  live status of every phase + feature — check before starting work
 /src/Cli/        WP-CLI commands, namespace WSFQ\Cli\ — registered from day one
-/docs/skills/    load the relevant one before touching that area (see below)
-/docs/DECISIONS.md  why past architectural choices were made — check before overturning one
+.opencode/skills/  load the relevant one before touching that area (see below)
+/openspec/DECISIONS.md  why past architectural choices were made (ADRs) — check before overturning one
 
 ## WP-CLI (day one)
 The plugin ships its own WP-CLI commands so agents and devs can drive it from the terminal without clicking through admin. Run them via wp-env:
 npm run env:cli -- wp wsfq <subcommand>
-Load /docs/skills/wp-cli.md for the full command list and conventions. Every command mirrors the equivalent REST/admin path and fires the same wsfq_ hooks; no command bypasses sanitization, capability, or cache-invalidation logic. Follow TDD: command tests live in tests/Cli/.
+Load .opencode/skills/wp-cli/SKILL.md for the full command list and conventions. Every command mirrors the equivalent REST/admin path and fires the same wsfq_ hooks; no command bypasses sanitization, capability, or cache-invalidation logic. Follow TDD: command tests live in tests/Cli/.
 
 ## Current phase
-Check /docs/PROGRESS.md first for what's done, in progress, or not started. It names the active phase/feature.
+Check /openspec/ROADMAP.md first for what's done, in progress, or not started. It names the active phase/feature and the matching capability spec under /openspec/specs/.
 
-Then read ONLY the matching /docs/phases/*.md file for that phase — do NOT read the whole plan. Token discipline: read the smallest file that answers the task.
+Then read ONLY the matching /openspec/specs/<capability>/spec.md before starting work — do NOT read unrelated specs. Token discipline: read the smallest file that answers the task.
 
 ## Updating progress (mandatory)
-- At the START of a feature/phase, mark it `In progress` in /docs/PROGRESS.md (and its docs/features file, if one exists).
-- When a feature/phase is DONE, update /docs/PROGRESS.md (status → Done, add branch/notes) and the matching docs/features file BEFORE considering the work complete. Never leave progress stale.
-- Same rule applies to phase status changes in /docs/phases/.
+OpenSpec is the single source of truth. At the START of a feature/phase, mark it `In progress` in /openspec/ROADMAP.md and create a new OpenSpec change for that feature (proposal + spec delta + tasks). When a feature/phase is DONE, update /openspec/ROADMAP.md (status → Done, add branch/notes) and archive its change BEFORE considering the work complete. Never leave progress stale.
 
 ## Canonical build plan (authoring source only)
-Planing/plan.md is the write-only source of truth — use it when EDITING phase content, never read it in full during normal work. Each phase has its own working copy in /docs/phases/. Never edit /docs/phases/ without also updating /docs/PROGRESS.md and the source plan.
+/openspec/ is the canonical source of truth for the build plan, requirements, and status. Use it when EDITING phase/feature content. Durable requirements live in /openspec/specs/; ADRs in /openspec/DECISIONS.md; status in /openspec/ROADMAP.md. Legacy /docs/ and /Planing/ were migrated here and removed — do not reintroduce parallel doc trees.
 
 ## Git workflow
 - Git repo: https://github.com/jahidhasan018/smart-woocommerce-faq

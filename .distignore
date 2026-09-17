@@ -25,13 +25,17 @@ wp-env.json
 .wp-env.json
 .wp-env.override.json
 
-# Docs & planning
+# Docs & planning (dev-only knowledge; never ships)
 AGENTS.md
 CLAUDE.md
 CONTRIBUTING.md
 CHANGELOG.md
-Planing/
-docs/
+openspec/
+skills/
+.opencode/
+.claude/
+.commandcode/
+ARCHITECTURE.md
 
 # Tests
 tests/

@@ -4,7 +4,7 @@
  *
  * Immutable snapshot of where a FAQ is assigned: global, direct products,
  * product categories, product tags, and variations. Backed by postmeta on the
- * FAQ post (see docs/DECISIONS.md ADR-001).
+ * FAQ post (see openspec/DECISIONS.md ADR-001).
  *
  * @package WSFQ
  */

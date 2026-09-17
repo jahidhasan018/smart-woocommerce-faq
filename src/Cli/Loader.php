@@ -6,7 +6,7 @@
  * context. Commands live in WSFQ\Cli\Commands\* and delegate to the same
  * service layer as the REST/admin paths, firing the same wsfq_ hooks.
  *
- * See /docs/skills/wp-cli.md for conventions.
+ * See .opencode/skills/wp-cli/SKILL.md for conventions.
  *
  * @package WSFQ
  */
@@ -45,7 +45,7 @@ final class Loader {
 	 * @param array $assoc_args Associative args.
 	 */
 	public function __invoke( array $args, array $assoc_args ): void { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
-		\WP_CLI::log( 'Smart FAQ for WooCommerce — use `wp wsfq <subcommand>`. See docs/skills/wp-cli.md.' );
+		\WP_CLI::log( 'Smart FAQ for WooCommerce — use `wp wsfq <subcommand>`. See .opencode/skills/wp-cli/SKILL.md.' );
 	}
 
 	/**

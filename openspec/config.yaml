@@ -1,28 +1,61 @@
 schema: spec-driven
 
+# Project context — injected into every openspec artifact workflow.
+# This is the single source of truth for how OpenSpec-driven work is conducted here.
+# Keep prose compact; agent gets it via `openspec context`.
 context: |
   Language: en
   All artifacts must be written in en.
   Keep OpenSpec structural headings and SHALL/MUST keywords in English.
 
+  Product: "WooCommerce Smart FAQ" (code prefix wsfq_ / WSFQ\ / wsfq-).
+  Repo: https://github.com/jahidhasan018/smart-woocommerce-faq
+  Approach: TDD + SOLID + OOP, one feature/branch/PR at a time, WP.org submission target.
+
+  Non-negotiable rules:
+  - TDD only: failing test before implementation, every time.
+  - Every class implements an interface when it has more than one possible strategy
+    (AI providers, cache backends, renderers, assignment storage).
+  - Never write a raw SQL string — always $wpdb->prepare().
+  - Never echo unescaped output — esc_html/esc_attr/wp_kses_post as appropriate.
+  - Every REST route needs a real permission_callback; never __return_true unless the
+    endpoint is intentionally public AND rate-limited.
+  - Add do_action/apply_filters hooks at every render and save point and every extension
+    boundary, prefixed wsfq_ and documented in the code docblock.
+  - Every feature ships a mirrored WSFQ\Cli\ WP-CLI command from day one that reuses the
+    same service layer, fires the same wsfq_ hooks, and never bypasses sanitization,
+    capability, or cache-invalidation.
+  - If a requirement is ambiguous or touches the data model / public API / security,
+    STOP and ask — do not guess.
+
+  Where things live:
+  - openspec/specs/      durable behavior contract (caps = features)
+  - openspec/ROADMAP.md  live status of phases + features
+  - openspec/DECISIONS.md architecture decision records
+  - src/                 PSR-4, namespace WSFQ\, one class per file
+  - tests/{Unit,Integration,Cli,e2e}/  tests by layer
+  - .opencode/skills/ loaded on demand before touching an area; wp-cli for CLI work.
+
+  Test commands:
+  - composer test:unit        PHPUnit 10, no WP bootstrap (Brain\Monkey)
+  - composer test:integration PHPUnit 9.6 phar vs real WP (see bin/install-wp-tests.sh)
+  - composer stan             PHPStan (level in phpstan.neon.dist)
+  - composer cs               WPCS via PHP_CodeSniffer
+  - npm run test:e2e          Playwright against wp-env
+
 # Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+rules:
+  proposal:
+    - Keep the Capabilities section in sync with openspec/specs/ and ROADMAP.md
+  tasks:
+    - Break tasks into chunks of max 2 hours
+    - Each task states how to verify completion (test/command/observable behavior)
 
 # Per-operation guidance (optional)
-# Add advisory guidance for how apply and archive work should be conducted.
-# This is separate from artifact rules above.
-# Example:
-#   operations:
-#     apply:
-#       guidance:
-#         - Keep test summaries concise
-#     archive:
-#       guidance:
-#         - Summarize the archive outcome before finishing
+operations:
+  apply:
+    guidance:
+      - Run composer cs && composer stan && composer test:unit before marking a task done
+  archive:
+    guidance:
+      - Verify the change's tasks are complete, then archive per the archive skill
