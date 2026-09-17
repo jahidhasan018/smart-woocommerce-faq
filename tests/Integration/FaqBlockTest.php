@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace WSFQ\Tests\Integration;
 
+use WSFQ\Admin\SettingsService;
 use WSFQ\Frontend\Blocks\FaqBlock;
 use WSFQ\Frontend\Renderers\AccordionRenderer;
 use WP_UnitTestCase;
@@ -40,7 +41,7 @@ final class FaqBlockTest extends WP_UnitTestCase {
 			)
 		);
 
-		$block = new FaqBlock( new AccordionRenderer() );
+		$block = new FaqBlock( new AccordionRenderer( new SettingsService() ) );
 		$out   = $block->render(
 			array( 'faqIds' => array( $faq ) ),
 			'',

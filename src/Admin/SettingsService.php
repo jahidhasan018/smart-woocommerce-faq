@@ -25,6 +25,23 @@ final class SettingsService {
 	public const OPTION_KEY = 'wsfq_settings';
 
 	/**
+	 * Product-page positions.
+	 *
+	 * These are mutually exclusive: the accordion renders in exactly one place
+	 * on a product page, so only one of them may be enabled at a time. The order
+	 * here is the fallback precedence when more than one is on.
+	 *
+	 * @var string[]
+	 */
+	public const PRODUCT_POSITIONS = array(
+		'after_product_summary',
+		'after_add_to_cart',
+		'after_product_meta',
+		'product_tab',
+		'after_single_product',
+	);
+
+	/**
 	 * Default settings.
 	 *
 	 * @var array<string, array>
@@ -33,11 +50,13 @@ final class SettingsService {
 		'display' => array(
 			'expand_all' => true,
 			'positions'  => array(
-				'product_tab'           => true,
-				'after_add_to_cart'     => true,
-				'after_product_meta'    => true,
+				// Product page: exactly one enabled.
 				'after_product_summary' => true,
-				'after_single_product'  => true,
+				'after_add_to_cart'     => false,
+				'after_product_meta'    => false,
+				'product_tab'           => false,
+				'after_single_product'  => false,
+				// Independent surfaces, each rendered on its own page.
 				'shop_archive'          => true,
 				'cart'                  => true,
 				'checkout'              => true,
@@ -71,6 +90,19 @@ final class SettingsService {
 
 		$settings = array_replace_recursive( self::DEFAULTS, $stored );
 
+		if ( isset( $settings['display']['positions'] ) && is_array( $settings['display']['positions'] ) ) {
+			// A stored choice outranks a default, so upgrading the defaults never
+			// overrides a position the site owner already picked.
+			$stored_positions = isset( $stored['display']['positions'] ) && is_array( $stored['display']['positions'] )
+				? $stored['display']['positions']
+				: array();
+
+			$settings['display']['positions'] = $this->single_product_position(
+				$settings['display']['positions'],
+				$stored_positions
+			);
+		}
+
 		/**
 		 * Filters the loaded settings.
 		 *
@@ -89,7 +121,19 @@ final class SettingsService {
 	 */
 	public function save( array $update ): array {
 		$current = $this->get_all();
-		$merged  = array_replace_recursive( $current, $this->sanitize( $update ) );
+		$clean   = $this->sanitize( $update );
+		$merged  = array_replace_recursive( $current, $clean );
+
+		if ( isset( $merged['display']['positions'] ) && is_array( $merged['display']['positions'] ) ) {
+			$preferred = isset( $clean['display']['positions'] ) && is_array( $clean['display']['positions'] )
+				? $clean['display']['positions']
+				: array();
+
+			$merged['display']['positions'] = $this->single_product_position(
+				$merged['display']['positions'],
+				$preferred
+			);
+		}
 
 		update_option( self::OPTION_KEY, $merged );
 
@@ -101,6 +145,36 @@ final class SettingsService {
 		do_action( 'wsfq_settings_saved', $merged );
 
 		return $merged;
+	}
+
+	/**
+	 * Collapse the product-page positions so at most one stays enabled.
+	 *
+	 * Positions explicitly set by the caller win, so an update coming from the
+	 * settings UI (or REST / CLI) changes the selection rather than being
+	 * silently overridden by whatever was stored.
+	 *
+	 * @param array<string, bool> $positions All positions.
+	 * @param array<string, bool> $preferred Positions explicitly set by the caller.
+	 * @return array<string, bool>
+	 */
+	private function single_product_position( array $positions, array $preferred = array() ): array {
+		$chosen = '';
+
+		foreach ( array( $preferred, $positions ) as $source ) {
+			foreach ( self::PRODUCT_POSITIONS as $slug ) {
+				if ( ! empty( $source[ $slug ] ) ) {
+					$chosen = $slug;
+					break 2;
+				}
+			}
+		}
+
+		foreach ( self::PRODUCT_POSITIONS as $slug ) {
+			$positions[ $slug ] = ( $slug === $chosen );
+		}
+
+		return $positions;
 	}
 
 	/**

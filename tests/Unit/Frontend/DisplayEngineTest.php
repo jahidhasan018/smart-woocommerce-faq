@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace WSFQ\Tests\Unit\Frontend;
 
 use Brain\Monkey\Functions;
+use WSFQ\Admin\SettingsService;
 use WSFQ\Frontend\DisplayEngine;
 use WSFQ\Frontend\Renderers\AccordionRenderer;
 use WSFQ\Frontend\Renderers\RendererInterface;
@@ -25,13 +26,25 @@ final class DisplayEngineTest extends TestCase {
 	 * Register() hooks the configured positions.
 	 */
 	public function test_register_hooks_positions(): void {
-		Functions\when( 'get_option' )->justReturn( array( 'product_tab' => true ) );
+		Functions\when( 'get_option' )->justReturn(
+			array(
+				'display' => array(
+					'positions' => array( 'product_tab' => true ),
+				),
+			)
+		);
+		Functions\when( 'apply_filters' )->alias(
+			static function ( $tag, $value ) {
+				return $value;
+			}
+		);
 		Functions\when( 'add_action' )->justReturn( null );
 		Functions\when( 'add_filter' )->justReturn( null );
 
 		$engine = new DisplayEngine(
 			$this->resolver(),
-			$this->renderer()
+			$this->renderer(),
+			new SettingsService()
 		);
 
 		$hooked = array();
@@ -51,7 +64,21 @@ final class DisplayEngineTest extends TestCase {
 	 * Register() skips positions disabled in the option.
 	 */
 	public function test_register_skips_disabled_positions(): void {
-		Functions\when( 'get_option' )->justReturn( array() );
+		Functions\when( 'get_option' )->justReturn(
+			array(
+				'display' => array(
+					'positions' => array(
+						'product_tab'       => false,
+						'after_add_to_cart' => false,
+					),
+				),
+			)
+		);
+		Functions\when( 'apply_filters' )->alias(
+			static function ( $tag, $value ) {
+				return $value;
+			}
+		);
 		Functions\when( 'add_action' )->justReturn( null );
 
 		$hooked = array();
@@ -61,10 +88,98 @@ final class DisplayEngineTest extends TestCase {
 			}
 		);
 
-		$engine = new DisplayEngine( $this->resolver(), $this->renderer() );
+		$engine = new DisplayEngine(
+			$this->resolver(),
+			$this->renderer(),
+			new SettingsService()
+		);
 		$engine->register();
 
 		$this->assertArrayNotHasKey( 'woocommerce_product_tabs', $hooked );
+	}
+
+	/**
+	 * Positions come from the settings service, so the admin toggles actually
+	 * control the storefront.
+	 */
+	public function test_register_reads_positions_from_settings(): void {
+		Functions\when( 'get_option' )->justReturn(
+			array(
+				'display' => array(
+					'positions' => array(
+						'product_tab' => true,
+						'cart'        => true,
+						'checkout'    => false,
+					),
+				),
+			)
+		);
+		Functions\when( 'apply_filters' )->alias(
+			static function ( $tag, $value ) {
+				return $value;
+			}
+		);
+
+		$filters = array();
+		Functions\when( 'add_filter' )->alias(
+			static function ( $tag, $cb ) use ( &$filters ) {
+				$filters[ $tag ] = $cb;
+			}
+		);
+		$actions = array();
+		Functions\when( 'add_action' )->alias(
+			static function ( $tag, $cb ) use ( &$actions ) {
+				$actions[ $tag ] = $cb;
+			}
+		);
+
+		$engine = new DisplayEngine(
+			$this->resolver(),
+			$this->renderer(),
+			new SettingsService()
+		);
+		$engine->register();
+
+		$this->assertArrayHasKey( 'woocommerce_product_tabs', $filters );
+		$this->assertArrayHasKey( 'woocommerce_cart_collaterals', $actions );
+		// Disabled positions must not be hooked.
+		$this->assertArrayNotHasKey( 'woocommerce_after_checkout_form', $actions );
+	}
+
+	/**
+	 * Render() reads the expand-all setting rather than a separate option.
+	 */
+	public function test_render_reads_expand_all_from_settings(): void {
+		Functions\when( 'get_option' )->justReturn(
+			array(
+				'display' => array( 'expand_all' => false ),
+			)
+		);
+		Functions\when( 'apply_filters' )->alias(
+			static function ( $tag, $value ) {
+				return $value;
+			}
+		);
+
+		$captured = null;
+		$renderer = \Mockery::mock( RendererInterface::class );
+		$renderer->shouldReceive( 'render' )
+			->once()
+			->andReturnUsing(
+				static function ( $ids, $args ) use ( &$captured ) {
+					$captured = $args;
+					return '';
+				}
+			);
+
+		$engine = new DisplayEngine(
+			$this->resolver(),
+			$renderer,
+			new SettingsService()
+		);
+		$engine->render( array( 1 ), array() );
+
+		$this->assertFalse( $captured['expand_all'] );
 	}
 
 	/**
@@ -84,7 +199,7 @@ final class DisplayEngineTest extends TestCase {
 		$renderer = \Mockery::mock( RendererInterface::class );
 		$renderer->shouldReceive( 'render' )->once()->with( array( 10, 11 ), \Mockery::type( 'array' ) )->andReturn( '<div>ok</div>' );
 
-		$engine = new DisplayEngine( $resolver, $renderer );
+		$engine = new DisplayEngine( $resolver, $renderer, new SettingsService() );
 
 		$this->assertSame( '<div>ok</div>', $engine->render_for_product( 42, array() ) );
 	}
@@ -106,7 +221,7 @@ final class DisplayEngineTest extends TestCase {
 		$renderer = \Mockery::mock( RendererInterface::class );
 		$renderer->shouldReceive( 'render' )->once()->with( array(), \Mockery::type( 'array' ) )->andReturn( '' );
 
-		$engine = new DisplayEngine( $resolver, $renderer );
+		$engine = new DisplayEngine( $resolver, $renderer, new SettingsService() );
 
 		$this->assertSame( '', $engine->render_for_product( 42, array() ) );
 	}
@@ -146,7 +261,11 @@ final class DisplayEngineTest extends TestCase {
 		Functions\when( 'esc_url' )->returnArg();
 		Functions\when( 'plugin_dir_url' )->justReturn( 'http://example.test/wp-content/plugins/smart-woocommerce-faq/' );
 
-		$engine = new DisplayEngine( $this->resolver(), $this->renderer() );
+		$engine = new DisplayEngine(
+			$this->resolver(),
+			$this->renderer(),
+			new SettingsService()
+		);
 		$engine->enqueue_assets();
 
 		$this->assertContains( 'wsfq-frontend', $registered['enqueued_scripts'] );
@@ -168,6 +287,6 @@ final class DisplayEngineTest extends TestCase {
 	 * @return RendererInterface
 	 */
 	private function renderer(): RendererInterface {
-		return new AccordionRenderer();
+		return new AccordionRenderer( new SettingsService() );
 	}
 }

@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace WSFQ\Tests\Integration;
 
+use WSFQ\Admin\SettingsService;
 use WSFQ\Frontend\DisplayEngine;
 use WSFQ\Frontend\Renderers\AccordionRenderer;
 use WSFQ\Support\FaqAssignments;
@@ -29,7 +30,8 @@ final class DisplayEngineTest extends WP_UnitTestCase {
 		$this->repository = new PostMetaFaqAssignment();
 		$this->engine    = new DisplayEngine(
 			new FaqResolver( $this->repository ),
-			new AccordionRenderer()
+			new AccordionRenderer( new SettingsService() ),
+			new SettingsService()
 		);
 		do_action( 'init' );
 	}

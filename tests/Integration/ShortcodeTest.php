@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace WSFQ\Tests\Integration;
 
+use WSFQ\Admin\SettingsService;
 use WSFQ\Frontend\Renderers\AccordionRenderer;
 use WSFQ\Frontend\Shortcodes\ShortcodeRegistry;
 use WSFQ\Support\FaqAssignments;
@@ -28,7 +29,7 @@ final class ShortcodeTest extends WP_UnitTestCase {
 		$repository     = new PostMetaFaqAssignment();
 		$this->registry = new ShortcodeRegistry(
 			new FaqResolver( $repository ),
-			new AccordionRenderer()
+			new AccordionRenderer( new SettingsService() )
 		);
 		do_action( 'init' );
 	}

@@ -20,12 +20,30 @@ test( 'admin settings page shows tabs', async ( { page } ) => {
 		page.getByText( 'AI Providers', { exact: true } )
 	).toBeVisible();
 
-	// Switch to the Display tab and confirm position toggles render.
-	await page.getByText( 'Display', { exact: true } ).click();
+	// Switch to the Display tab.
+	await page.getByRole( 'tab', { name: 'Display', exact: true } ).click();
+
+	// The product-page location is a single choice, so it renders as a select.
+	const productPosition = page.locator( '.wsfq-field select' );
+	await expect( productPosition ).toBeVisible();
+	await expect( productPosition.locator( 'option' ) ).toHaveCount( 6 );
+
+	// The page-level locations stay independent toggles.
 	await expect(
-		page.getByText( 'Product tab', { exact: true } )
+		page.getByText( 'Shop and category pages', { exact: true } )
 	).toBeVisible();
 	await expect(
 		page.getByText( 'Checkout page', { exact: true } )
 	).toBeVisible();
+
+	// Choosing a product location persists through the REST API.
+	await productPosition.selectOption( 'product_tab' );
+	await expect( page.locator( '.wsfq-save-status' ) ).toContainText(
+		'All changes saved'
+	);
+	await page.reload();
+	await page.getByRole( 'tab', { name: 'Display', exact: true } ).click();
+	await expect( page.locator( '.wsfq-field select' ) ).toHaveValue(
+		'product_tab'
+	);
 } );

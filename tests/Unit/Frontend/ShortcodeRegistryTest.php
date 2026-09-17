@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace WSFQ\Tests\Unit\Frontend;
 
 use Brain\Monkey\Functions;
+use WSFQ\Admin\SettingsService;
 use WSFQ\Frontend\Renderers\AccordionRenderer;
 use WSFQ\Frontend\Renderers\RendererInterface;
 use WSFQ\Frontend\Shortcodes\ShortcodeRegistry;
@@ -172,6 +173,6 @@ final class ShortcodeRegistryTest extends TestCase {
 	 * @return RendererInterface
 	 */
 	private function renderer(): RendererInterface {
-		return new AccordionRenderer();
+		return new AccordionRenderer( new SettingsService() );
 	}
 }

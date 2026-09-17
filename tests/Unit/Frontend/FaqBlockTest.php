@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace WSFQ\Tests\Unit\Frontend;
 
 use Brain\Monkey\Functions;
+use WSFQ\Admin\SettingsService;
 use WSFQ\Frontend\Blocks\FaqBlock;
 use WSFQ\Frontend\Renderers\AccordionRenderer;
 use WSFQ\Frontend\Renderers\RendererInterface;
@@ -36,7 +37,7 @@ final class FaqBlockTest extends TestCase {
 			}
 		);
 
-		$block = new FaqBlock( new AccordionRenderer() );
+		$block = new FaqBlock( $this->renderer() );
 		$block->register();
 
 		$this->assertStringContainsString( 'blocks/faq/block.json', $registered['path'] );
@@ -87,11 +88,20 @@ final class FaqBlockTest extends TestCase {
 	 * Returns empty when no ids given.
 	 */
 	public function test_render_empty_without_ids(): void {
-		$block = new FaqBlock( new AccordionRenderer() );
+		$block = new FaqBlock( $this->renderer() );
 
 		$this->assertSame(
 			'',
 			$block->render( array(), '', new \WP_Block( array(), array() ) )
 		);
+	}
+
+	/**
+	 * Default renderer.
+	 *
+	 * @return RendererInterface
+	 */
+	private function renderer(): RendererInterface {
+		return new AccordionRenderer( new SettingsService() );
 	}
 }

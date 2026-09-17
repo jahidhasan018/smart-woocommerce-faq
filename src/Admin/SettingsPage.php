@@ -55,7 +55,7 @@ final class SettingsPage {
 		);
 		wp_enqueue_style(
 			'wsfq-admin',
-			esc_url( WSFQ_URL . 'assets/build/admin.css' ),
+			esc_url( WSFQ_URL . 'assets/build/style-admin.css' ),
 			array(),
 			$ver
 		);
@@ -65,8 +65,9 @@ final class SettingsPage {
 	 * Render the settings page shell.
 	 */
 	public function render(): void {
-		echo '<div class="wrap">';
-		echo '<h1>' . esc_html__( 'Smart FAQ Settings', 'smart-woocommerce-faq' ) . '</h1>';
+		echo '<div class="wrap wsfq-settings-wrap">';
+		echo '<h1>' . esc_html__( 'Smart FAQ', 'smart-woocommerce-faq' ) . '</h1>';
+		echo '<p class="wsfq-settings__intro">' . esc_html__( 'Manage your FAQ library and control where the accordion appears across your WooCommerce store.', 'smart-woocommerce-faq' ) . '</p>';
 		echo '<div id="wsfq-settings-root" data-wsfq-settings-page="' . esc_attr( self::SLUG ) . '"></div>';
 		echo '</div>';
 	}

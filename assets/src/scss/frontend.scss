@@ -25,12 +25,18 @@
 	--wsfq-transition-base: #{$wsfq-transition-base};
 }
 
+// Icons are inlined SVG masks so they inherit currentColor and cost no extra
+// request. Only the alpha channel matters, hence the flat black stroke.
+$wsfq-icon-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+$wsfq-icon-chevrons: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 6l5 5 5-5'/%3E%3Cpath d='M7 13l5 5 5-5'/%3E%3C/svg%3E");
+
 .wsfq-accordion {
 	font-family: var(--wsfq-font-body);
 	color: var(--wsfq-color-text);
-	border: 1px solid var(--wsfq-color-border);
-	border-radius: var(--wsfq-radius-md);
 	background: var(--wsfq-color-surface);
+	border: 1px solid var(--wsfq-color-border);
+	border-radius: var(--wsfq-radius-lg);
+	box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
 	overflow: hidden;
 }
 
@@ -53,14 +59,31 @@
 	justify-content: space-between;
 	width: 100%;
 	gap: var(--wsfq-space-md);
-	padding: var(--wsfq-space-md);
+	padding: 18px var(--wsfq-space-lg);
 	background: transparent;
 	border: 0;
 	color: inherit;
 	font: inherit;
+	font-size: 15px;
 	font-weight: 600;
+	line-height: 1.5;
 	text-align: start;
 	cursor: pointer;
+	transition: background-color var(--wsfq-transition-fast), color var(--wsfq-transition-fast);
+
+	// Chevron. Drives off aria-expanded, so it stays correct no matter whether
+	// the item was opened by its own click or by the expand-all control.
+	&::after {
+		content: "";
+		flex: 0 0 auto;
+		width: 20px;
+		height: 20px;
+		background-color: currentcolor;
+		-webkit-mask: #{$wsfq-icon-chevron} center / contain no-repeat;
+		mask: #{$wsfq-icon-chevron} center / contain no-repeat;
+		opacity: 0.45;
+		transition: transform var(--wsfq-transition-base), opacity var(--wsfq-transition-fast);
+	}
 
 	&:hover {
 		background: var(--wsfq-color-surface-alt);
@@ -70,32 +93,121 @@
 		outline: 2px solid var(--wsfq-color-focus);
 		outline-offset: -2px;
 	}
+
+	&[aria-expanded="true"] {
+		color: var(--wsfq-color-primary);
+		background: var(--wsfq-color-surface-alt);
+
+		&::after {
+			transform: rotate(180deg);
+			opacity: 1;
+		}
+	}
+}
+
+.wsfq-toggle__label {
+	flex: 1 1 auto;
 }
 
 .wsfq-answer {
-	padding: 0 var(--wsfq-space-md) var(--wsfq-space-md);
+	padding: 0 var(--wsfq-space-lg) var(--wsfq-space-md);
 	color: var(--wsfq-color-text);
+	font-size: 15px;
+	line-height: 1.7;
+	overflow-wrap: break-word;
+	animation: wsfq-answer-reveal var(--wsfq-transition-base) ease-out;
+
+	// Keep authored content from adding stray margins at the seams.
+	> :first-child {
+		margin-block-start: 0;
+	}
+
+	> :last-child {
+		margin-block-end: 0;
+	}
 
 	&[hidden] {
 		display: none;
 	}
 }
 
+@keyframes wsfq-answer-reveal {
+
+	from {
+		opacity: 0;
+		transform: translateY(-4px);
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
 .wsfq-expand-all {
-	padding: var(--wsfq-space-sm) var(--wsfq-space-md);
-	text-align: end;
+	display: flex;
+	justify-content: flex-end;
+	margin-block-end: var(--wsfq-space-sm);
+}
+
+// Only the label matching the current state is shown; the swap is driven by
+// aria-expanded so it stays correct without JS touching the text.
+.wsfq-expand-all-toggle__label--collapse {
+	display: none;
 }
 
 .wsfq-expand-all-toggle {
-	background: transparent;
-	border: 0;
-	color: var(--wsfq-color-primary);
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 12px;
+	background: var(--wsfq-color-surface);
+	border: 1px solid var(--wsfq-color-border);
+	border-radius: var(--wsfq-radius-md);
+	color: var(--wsfq-color-muted);
 	font: inherit;
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1;
 	cursor: pointer;
+	transition: background-color var(--wsfq-transition-fast), border-color var(--wsfq-transition-fast), color var(--wsfq-transition-fast);
+
+	&::before {
+		content: "";
+		flex: 0 0 auto;
+		width: 16px;
+		height: 16px;
+		background-color: currentcolor;
+		-webkit-mask: #{$wsfq-icon-chevrons} center / contain no-repeat;
+		mask: #{$wsfq-icon-chevrons} center / contain no-repeat;
+		transition: transform var(--wsfq-transition-base);
+	}
+
+	&:hover {
+		background: var(--wsfq-color-surface-alt);
+		color: var(--wsfq-color-primary);
+	}
 
 	&:focus-visible {
 		outline: 2px solid var(--wsfq-color-focus);
 		outline-offset: 2px;
+	}
+
+	// Expanded: flip the icon and swap the label to "Collapse all".
+	&[aria-expanded="true"] {
+		color: var(--wsfq-color-primary);
+
+		&::before {
+			transform: rotate(180deg);
+		}
+
+		.wsfq-expand-all-toggle__label--expand {
+			display: none;
+		}
+
+		.wsfq-expand-all-toggle__label--collapse {
+			display: inline;
+		}
 	}
 }
 
@@ -104,4 +216,27 @@
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
 	gap: var(--wsfq-space-md);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+	.wsfq-toggle::after,
+	.wsfq-expand-all-toggle::before {
+		transition: none;
+	}
+
+	.wsfq-answer {
+		animation: none;
+	}
+}
+
+@media (max-width: 480px) {
+
+	.wsfq-toggle {
+		padding: 16px var(--wsfq-space-md);
+	}
+
+	.wsfq-answer {
+		padding-inline: var(--wsfq-space-md);
+	}
 }

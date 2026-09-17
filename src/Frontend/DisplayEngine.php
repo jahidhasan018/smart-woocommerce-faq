@@ -3,8 +3,9 @@
  * FAQ display engine.
  *
  * Registers WooCommerce display positions and renders resolved FAQs for the
- * current product. Position enablement reads the `wsfq_display_positions`
- * option (default: all on); the settings UI (feature 08) manages it later.
+ * current product. Position enablement and the expand-all control read from
+ * the settings service (the `wsfq_settings` option), which the admin settings
+ * UI manages.
  *
  * Positions: product_tab, after_add_to_cart, after_product_meta,
  * after_product_summary, after_single_product, shop_archive, cart, checkout.
@@ -21,6 +22,7 @@ declare(strict_types=1);
 
 namespace WSFQ\Frontend;
 
+use WSFQ\Admin\SettingsService;
 use WSFQ\Frontend\Renderers\AccordionRenderer;
 use WSFQ\Frontend\Renderers\RendererInterface;
 use WSFQ\Support\Interfaces\FaqResolverInterface;
@@ -45,30 +47,27 @@ final class DisplayEngine {
 	private RendererInterface $renderer;
 
 	/**
-	 * Position slug => default enabled.
+	 * Settings source.
 	 *
-	 * @var array<string, bool>
+	 * @var SettingsService
 	 */
-	private const POSITIONS = array(
-		'product_tab'           => true,
-		'after_add_to_cart'     => true,
-		'after_product_meta'    => true,
-		'after_product_summary' => true,
-		'after_single_product'  => true,
-		'shop_archive'          => true,
-		'cart'                  => true,
-		'checkout'              => true,
-	);
+	private SettingsService $settings;
 
 	/**
 	 * Constructor.
 	 *
 	 * @param FaqResolverInterface $resolver FAQ resolver.
 	 * @param RendererInterface    $renderer Renderer.
+	 * @param SettingsService      $settings Settings source.
 	 */
-	public function __construct( FaqResolverInterface $resolver, RendererInterface $renderer ) {
+	public function __construct(
+		FaqResolverInterface $resolver,
+		RendererInterface $renderer,
+		SettingsService $settings
+	) {
 		$this->resolver = $resolver;
 		$this->renderer = $renderer;
+		$this->settings = $settings;
 	}
 
 	/**
@@ -287,7 +286,10 @@ final class DisplayEngine {
 	public function render( array $faq_ids, array $args = array() ): string {
 		// Expand-all control defaults to on, overridable per call or via filter.
 		if ( ! array_key_exists( 'expand_all', $args ) ) {
-			$args['expand_all'] = (bool) get_option( 'wsfq_expand_all', true );
+			$settings           = $this->settings->get_all();
+			$args['expand_all'] = isset( $settings['display']['expand_all'] )
+				? (bool) $settings['display']['expand_all']
+				: true;
 		}
 
 		$renderer = apply_filters( 'wsfq_renderer', $this->renderer, $args );
@@ -298,12 +300,16 @@ final class DisplayEngine {
 	}
 
 	/**
-	 * Enabled positions per the option (all on by default).
+	 * Enabled positions from the saved settings.
 	 *
 	 * @return array<string, bool>
 	 */
 	private function enabled_positions(): array {
-		$positions = get_option( 'wsfq_display_positions', self::POSITIONS );
+		$settings = $this->settings->get_all();
+
+		$positions = isset( $settings['display']['positions'] ) && is_array( $settings['display']['positions'] )
+			? $settings['display']['positions']
+			: array();
 
 		/**
 		 * Filters which display positions are enabled.

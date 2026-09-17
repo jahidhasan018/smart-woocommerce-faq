@@ -92,7 +92,10 @@ final class Plugin {
 			\WSFQ\Frontend\DisplayEngine::class,
 			static fn( Container $c ): \WSFQ\Frontend\DisplayEngine => new \WSFQ\Frontend\DisplayEngine(
 				$c->get( \WSFQ\Support\Interfaces\FaqResolverInterface::class ),
-				new \WSFQ\Frontend\Renderers\AccordionRenderer()
+				new \WSFQ\Frontend\Renderers\AccordionRenderer(
+					$c->get( \WSFQ\Admin\SettingsService::class )
+				),
+				$c->get( \WSFQ\Admin\SettingsService::class )
 			)
 		);
 
@@ -100,14 +103,18 @@ final class Plugin {
 			\WSFQ\Frontend\Shortcodes\ShortcodeRegistry::class,
 			static fn( Container $c ): \WSFQ\Frontend\Shortcodes\ShortcodeRegistry => new \WSFQ\Frontend\Shortcodes\ShortcodeRegistry(
 				$c->get( \WSFQ\Support\Interfaces\FaqResolverInterface::class ),
-				new \WSFQ\Frontend\Renderers\AccordionRenderer()
+				new \WSFQ\Frontend\Renderers\AccordionRenderer(
+					$c->get( \WSFQ\Admin\SettingsService::class )
+				)
 			)
 		);
 
 		$this->container->singleton(
 			\WSFQ\Frontend\Blocks\FaqBlock::class,
-			static fn(): \WSFQ\Frontend\Blocks\FaqBlock => new \WSFQ\Frontend\Blocks\FaqBlock(
-				new \WSFQ\Frontend\Renderers\AccordionRenderer()
+			static fn( Container $c ): \WSFQ\Frontend\Blocks\FaqBlock => new \WSFQ\Frontend\Blocks\FaqBlock(
+				new \WSFQ\Frontend\Renderers\AccordionRenderer(
+					$c->get( \WSFQ\Admin\SettingsService::class )
+				)
 			)
 		);
 

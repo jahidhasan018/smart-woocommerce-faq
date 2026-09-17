@@ -1,5 +1,318 @@
 // Admin settings app styles.
+// Design tokens compile to CSS custom properties here as well as on the
+// frontend, so the future Design tab can override them at runtime with an
+// inline <style> block, without a rebuild.
+
+@use "../scss/tokens" as *;
+
+:root {
+	--wsfq-color-primary: #{$wsfq-color-primary};
+	--wsfq-color-text: #{$wsfq-color-text};
+	--wsfq-color-muted: #{$wsfq-color-muted};
+	--wsfq-color-border: #{$wsfq-color-border};
+	--wsfq-color-surface: #{$wsfq-color-surface};
+	--wsfq-color-surface-alt: #{$wsfq-color-surface-alt};
+	--wsfq-color-focus: #{$wsfq-color-focus};
+	--wsfq-radius-sm: #{$wsfq-radius-sm};
+	--wsfq-radius-md: #{$wsfq-radius-md};
+	--wsfq-radius-lg: #{$wsfq-radius-lg};
+	--wsfq-space-xs: #{$wsfq-space-xs};
+	--wsfq-space-sm: #{$wsfq-space-sm};
+	--wsfq-space-md: #{$wsfq-space-md};
+	--wsfq-space-lg: #{$wsfq-space-lg};
+	--wsfq-space-xl: #{$wsfq-space-xl};
+	--wsfq-font-body: #{$wsfq-font-body};
+	--wsfq-font-heading: #{$wsfq-font-heading};
+	--wsfq-transition-fast: #{$wsfq-transition-fast};
+	--wsfq-transition-base: #{$wsfq-transition-base};
+}
+
+.wsfq-settings-wrap {
+	max-width: 900px;
+}
+
+.wsfq-settings__intro {
+	max-width: 68ch;
+	margin: var(--wsfq-space-sm) 0 var(--wsfq-space-lg);
+	color: var(--wsfq-color-muted);
+	font-size: 14px;
+}
+
+// Save state ------------------------------------------------------------
+// Changes save per toggle, so this is a status readout rather than a button.
+
+.wsfq-settings__status {
+	display: flex;
+	justify-content: flex-end;
+	min-height: 24px;
+	margin-block-end: var(--wsfq-space-sm);
+}
+
+.wsfq-save-status {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--wsfq-space-xs);
+	color: var(--wsfq-color-muted);
+	font-size: 12px;
+	line-height: 1;
+
+	.components-spinner {
+		margin: 0;
+	}
+
+	&__icon {
+		width: 16px;
+		height: 16px;
+		font-size: 16px;
+	}
+}
+
+// Settings surface ------------------------------------------------------
 
 .wsfq-settings-tabs {
-	margin-block-start: 1rem;
+	overflow: hidden;
+	background: var(--wsfq-color-surface);
+	border: 1px solid var(--wsfq-color-border);
+	border-radius: var(--wsfq-radius-md);
+
+	.components-tab-panel__tabs {
+		padding-inline: var(--wsfq-space-md);
+		background: var(--wsfq-color-surface-alt);
+		border-block-end: 1px solid var(--wsfq-color-border);
+		overflow-x: auto;
+		scrollbar-width: none;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+	}
+
+	.components-tab-panel__tabs-item {
+		color: var(--wsfq-color-muted);
+		white-space: nowrap;
+
+		&:hover:not(:disabled) {
+			color: var(--wsfq-color-text);
+		}
+
+		&.is-active {
+			color: var(--wsfq-color-text);
+		}
+	}
+
+	.components-tab-panel__tab-content {
+		padding: var(--wsfq-space-xl);
+	}
+}
+
+// Sections --------------------------------------------------------------
+// Groups are separated by space; rows inside a group by hairlines.
+
+.wsfq-section {
+
+	& + & {
+		margin-block-start: var(--wsfq-space-xl);
+	}
+
+	&__header {
+		margin-block-end: var(--wsfq-space-xs);
+	}
+
+	&__heading {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: var(--wsfq-space-sm);
+	}
+
+	&__title {
+		margin: 0;
+		color: var(--wsfq-color-text);
+		font-size: 15px;
+		font-weight: 600;
+		line-height: 1.5;
+	}
+
+	&__count {
+		color: var(--wsfq-color-muted);
+		font-size: 12px;
+		font-weight: 400;
+		line-height: 1.5;
+	}
+
+	&__description {
+		max-width: 68ch;
+		margin: var(--wsfq-space-xs) 0 0;
+		color: var(--wsfq-color-muted);
+		font-size: 13px;
+		line-height: 1.6;
+	}
+}
+
+// Single-choice rows ----------------------------------------------------
+
+.wsfq-field {
+	max-width: 420px;
+	padding-block-start: var(--wsfq-space-xs);
+}
+
+// @wordpress/components styles the SelectControl label uppercase and bold via
+// an emotion rule built from three class selectors. This selector is
+// deliberately over-qualified to out-specify it, so the label matches the
+// panel's row labels.
+.wsfq-settings-tabs .wsfq-field .components-text.components-input-control__label {
+	color: var(--wsfq-color-text);
+	font-size: 13px;
+	font-weight: 400;
+	text-transform: none;
+}
+
+// Toggle rows -----------------------------------------------------------
+// Label leads and toggle trails, so labels share one reading edge and
+// controls share another. Row labels stay at normal weight so the section
+// heading is the only bold thing in the panel.
+
+.wsfq-setting {
+	padding-block: 14px;
+	border-block-start: 1px solid var(--wsfq-color-border);
+
+	&:first-child {
+		border-block-start: 0;
+	}
+
+	.components-base-control__field {
+		margin-bottom: 0;
+	}
+
+	.components-base-control__field > div {
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+	}
+
+	.components-toggle-control__label {
+		order: -1;
+		flex: 1 1 auto;
+		color: var(--wsfq-color-text);
+		font-size: 13px;
+		font-weight: 400;
+		line-height: 1.5;
+	}
+
+	.components-toggle-control__help {
+		max-width: 60ch;
+		margin-inline-start: 0;
+		font-size: 12px;
+		line-height: 1.6;
+	}
+}
+
+// Empty states ----------------------------------------------------------
+
+.wsfq-empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--wsfq-space-xs);
+	padding: var(--wsfq-space-lg) var(--wsfq-space-md);
+	text-align: center;
+
+	&__icon {
+		width: 24px;
+		height: 24px;
+		font-size: 24px;
+		color: var(--wsfq-color-border);
+	}
+
+	&__title {
+		margin: 0;
+		color: var(--wsfq-color-text);
+		font-size: 14px;
+		font-weight: 600;
+	}
+
+	&__text {
+		max-width: 48ch;
+		margin: 0;
+		color: var(--wsfq-color-muted);
+		font-size: 13px;
+		line-height: 1.6;
+	}
+}
+
+// Loading skeleton ------------------------------------------------------
+
+.wsfq-skeleton {
+
+	&__panel {
+		overflow: hidden;
+		background: var(--wsfq-color-surface);
+		border: 1px solid var(--wsfq-color-border);
+		border-radius: var(--wsfq-radius-md);
+	}
+
+	&__tabs {
+		height: 48px;
+		background: var(--wsfq-color-surface-alt);
+		border-block-end: 1px solid var(--wsfq-color-border);
+	}
+
+	&__body {
+		padding: var(--wsfq-space-xl);
+	}
+
+	&__heading,
+	&__row {
+		background: var(--wsfq-color-border);
+		border-radius: var(--wsfq-radius-sm);
+		animation: wsfq-skeleton-pulse 1.6s ease-in-out infinite;
+	}
+
+	&__heading {
+		width: 200px;
+		height: 14px;
+		margin-block-end: var(--wsfq-space-md);
+	}
+
+	&__heading--gap {
+		margin-block-start: var(--wsfq-space-xl);
+	}
+
+	&__row {
+		height: 20px;
+		margin-block-start: var(--wsfq-space-md);
+	}
+}
+
+@keyframes wsfq-skeleton-pulse {
+
+	0%,
+	100% {
+		opacity: 1;
+	}
+
+	50% {
+		opacity: 0.55;
+	}
+}
+
+// Responsive ------------------------------------------------------------
+
+@media (max-width: 782px) {
+
+	.wsfq-settings-tabs .components-tab-panel__tab-content {
+		padding: var(--wsfq-space-md);
+	}
+
+	.wsfq-skeleton__body {
+		padding: var(--wsfq-space-md);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+	.wsfq-skeleton__heading,
+	.wsfq-skeleton__row {
+		animation: none;
+	}
 }

@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Shell(node -e const p=require('./package.json');console.log('node',process.version))",
+      "Shell(ls:*)",
+      "Shell(python3 - <<'PY' import re css=open('node_modules/@wordpress/components/build-style/style.css').read() for sel in ['.components-toggle-control','.components-tab-panel','.components-card','.components-notice','.components-panel__body']: # find rule blocks whose selector contains sel for m in re.finditer(r'([^{}]*'+re.escape(sel)+r'[^{}]*)\\{([^{}]*)\\}', css): s=m.group(1).strip() if len(s)<220: print(s,'{',m.group(2).strip()[:300],'}') print('-----') PY)",
+      "Shell(npm:*)",
+      "Shell(composer:*)",
+      "Shell(docker:*)",
+      "Shell(npx wp-env status 2 >& 1)",
+      "Shell(npx wp-env status)",
+      "Shell(ls -a | grep -i wp-env; echo \"---\"; cat .wp-env.json 2>/dev/null || cat .wp-env.jsonc 2>/dev/null; echo \"--- docker ps ---\"; docker ps --format '{{.Names}}\\t{{.Status}}' | head)",
+      "Shell(curl -s -o /dev/null -w wp-login: %{http_code}\\n http://localhost:8888/wp-login.php)",
+      "Shell(curl -s -o /dev/null -w admin: %{http_code}\\n http://localhost:8888/wp-admin/admin.php?page=wsfq-smart-faq)",
+      "Shell(agent-browser:*)",
+      "Shell(COMMANDCODE_SCRATCHPAD= node _design-check.mjs 2 >& 1)",
+      "Shell(python3 - <<'PY' import re css = open('assets/build/style-admin.css').read() for m in re.finditer(r'([^{}]*wsfq-setting[^{}]*)\\{([^{}]*)\\}', css): print(m.group(1).strip(), '{', m.group(2).strip(), '}') print('---') PY)",
+      "Shell(CID=$(docker ps --format '{{.Names}}' | grep -E 'wordpress-1$' | grep -v tests | head -1); echo \"container=$CID\"; docker exec \"$CID\" sh -lc \"grep -c 'createRoot' /var/www/html/wp-includes/js/dist/element.min.js\" 2>&1 | head -3)",
+      "Shell(node _design-check2.mjs 2 >& 1)",
+      "Shell(rm:*)",
+      "Shell(set:*)",
+      "Shell(COMMANDCODE_SCRATCHPAD= node _verify.mjs 2 >& 1)",
+      "Shell(node _probe.mjs 2 >& 1)",
+      "Shell(tail:*)",
+      "Shell(curl -sL http://localhost:8888/?p=12)",
+      "Shell(grep:*)",
+      "Shell(HTML=$(curl -sL \"http://localhost:8888/?p=12\"); echo \"bytes: ${#HTML}\"; echo \"$HTML\" | grep -o 'woocommerce-tabs\\|wc-tabs\\|add_to_cart\\|single_add_to_cart_button\\|related products\\|woocommerce-product-gallery\\|summary entry-summary\\|wp-block-woocommerce[a-z-]*' | sort | uniq -c | head -20)"
+    ],
+    "deny": [],
+    "defaultMode": "default"
+  }
+}
